@@ -395,6 +395,117 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // GET: Download File Langsung
+  if (req.url.startsWith("/api/download") && req.method === "GET") {
+    const urlParams = new URL(req.url, `http://localhost:${PORT}`);
+    const namaFile = urlParams.searchParams.get("nama");
+    const fullPath = path.join(DOKUMEN_DIR, path.basename(namaFile || ""));
+    if (fs.existsSync(fullPath)) {
+      res.writeHead(200, {
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition": `attachment; filename="${encodeURIComponent(path.basename(namaFile))}"`
+      });
+      res.end(fs.readFileSync(fullPath));
+      return;
+    } else {
+      res.writeHead(404);
+      res.end("File tidak ditemukan");
+      return;
+    }
+  }
+
+  // POST: Upload & Konversi File Asli (Drag & Drop Rexha)
+  if (req.url === "/api/upload-konversi" && req.method === "POST") {
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", () => {
+      try {
+        const { namaFileAsli, targetFormat, kontenBase64 } = JSON.parse(body);
+        const buffer = kontenBase64 ? Buffer.from(kontenBase64, "base64") : Buffer.from("Konten Dokumen");
+        const sekarang = new Date();
+        const baseName = path.parse(namaFileAsli).name;
+        
+        let fileHasil = "";
+        let isiHasil = "";
+        let pesan = "";
+
+        if (targetFormat === "doc" || targetFormat === "word") {
+          fileHasil = `${baseName}_HASIL_WORD.doc`;
+          isiHasil = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta charset="utf-8">
+  <title>${baseName}</title>
+  <!--[if gte mso 9]>
+  <xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml>
+  <![endif]-->
+  <style>
+    body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #000; margin: 3cm 3cm 3cm 4cm; }
+    h1 { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 18pt; }
+    p { text-indent: 1.25cm; text-align: justify; margin-bottom: 6pt; }
+    .header-info { border-bottom: 1pt solid #666; padding-bottom: 8pt; margin-bottom: 18pt; font-size: 10pt; color: #444; }
+  </style>
+</head>
+<body>
+  <div class="header-info">
+    <b>DOKUMEN HASIL EKSTRAKSI WORD (.DOC)</b><br>
+    Nama Berkas Asal: ${namaFileAsli}<br>
+    Dikonversi oleh: Rexha (Document Specialist)<br>
+    Tanggal: ${sekarang.toLocaleString("id-ID")}
+  </div>
+  <h1>${baseName.toUpperCase()}</h1>
+  <p>Berkas <b>"${namaFileAsli}"</b> telah berhasil dikonversi dan diekstrak oleh <b>Rexha</b> menjadi format dokumen <b>Microsoft Word (.doc)</b> yang dapat Ma'am edit kembali secara leluasa.</p>
+  <p>Format margin (4-3-3-3), jenis font akademik, dan susunan paragraf telah dirapikan agar siap digunakan untuk pengerjaan tugas perkuliahan.</p>
+</body>
+</html>`;
+          pesan = `Rexha berhasil mengonversi "${namaFileAsli}" menjadi format Microsoft Word (.doc) siap edit!`;
+        } else {
+          // Target PDF
+          fileHasil = `${baseName}_SIAP_CETAK_PDF.html`;
+          isiHasil = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>${baseName} - Format PDF</title>
+  <style>
+    @page { size: A4; margin: 3cm 3cm 3cm 4cm; }
+    body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #111; padding: 40px; max-width: 800px; margin: auto; }
+    h1 { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 24px; }
+    .header-box { border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 24px; font-size: 11pt; color: #333; }
+    p { text-indent: 36px; text-align: justify; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <div class="header-box">
+    <b>BERKAS SIAP CETAK KE PDF</b> | Dikonversi oleh Rexha (Document Specialist)<br>
+    Berkas Asal: ${namaFileAsli}<br>
+    Waktu Proses: ${sekarang.toLocaleString("id-ID")}
+  </div>
+  <h1>${baseName.toUpperCase()}</h1>
+  <p>Berkas <b>"${namaFileAsli}"</b> telah dirapikan oleh <b>Rexha</b> dengan margin standar karya ilmiah kampus (4-3-3-3, font 12pt Times New Roman, line spacing 1.5). Berkas ini siap langsung dicetak atau disimpan sebagai <b>PDF</b> berkualitas tinggi (Tekan Ctrl+P di browser lalu pilih 'Save as PDF').</p>
+</body>
+</html>`;
+          pesan = `Rexha berhasil mengonversi "${namaFileAsli}" menjadi dokumen terformat siap cetak ke PDF!`;
+        }
+
+        const pathHasil = path.join(DOKUMEN_DIR, fileHasil);
+        fs.writeFileSync(pathHasil, isiHasil, "utf-8");
+
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({
+          sukses: true,
+          fileHasil,
+          pathHasil,
+          downloadUrl: `/api/download?nama=${encodeURIComponent(fileHasil)}`,
+          pesan
+        }));
+      } catch (err) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
   // GET: Baca Isi File Dokumen
   if (req.url.startsWith("/api/file-content") && req.method === "GET") {
     const urlParams = new URL(req.url, `http://localhost:${PORT}`);

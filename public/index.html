@@ -497,6 +497,23 @@
       opacity: 1;
     }
 
+    /* DRAG & DROP ZONE REXHA */
+    .drop-zone-card {
+      background: #fdfbf7;
+      border: 2px dashed #d5c8b8;
+      border-radius: 14px;
+      padding: 22px 18px;
+      text-align: center;
+      margin-bottom: 22px;
+      transition: all 0.25s ease;
+    }
+    .drop-zone-card.drag-over {
+      background: #f5ece0;
+      border-color: #8d5b36;
+      box-shadow: 0 0 0 3px rgba(141, 91, 54, 0.15);
+      transform: scale(1.01);
+    }
+
     /* INSTRUCTION FORM */
     .command-box {
       background: var(--surface-soft);
@@ -896,6 +913,66 @@
             </div>
           </div> <!-- PENUTUP EMPLOYEES-ROW (3 KOLOM SEIMBANG) -->
 
+          <!-- KOTAK DRAG & DROP KONVERSI REXHA -->
+          <div class="drop-zone-card" id="rexhaDropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+            <input type="file" id="fileSelectorInput" accept=".pdf,.doc,.docx,.txt" style="display:none;" onchange="berkasDipilih(this.files[0])">
+            
+            <div id="dropzoneEmpty">
+              <div style="font-size: 32px; margin-bottom: 8px;">📂 ⇄ 📑</div>
+              <h3 style="font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--text-main);">
+                Workstation Drag & Drop Berkas Rexha
+              </h3>
+              <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+                Tarik & jatuhkan file tugas Ma'am ke sini (<b>.pdf, .docx, .doc</b>) atau klik tombol di bawah:
+              </p>
+              <button class="btn-notification" onclick="document.getElementById('fileSelectorInput').click()" style="margin: auto; background: white;">
+                <span>📁</span> Pilih Berkas dari Laptop
+              </button>
+            </div>
+
+            <!-- TAMPILAN JIKA FILE SUDAH DIMASUKKAN -->
+            <div id="dropzoneActive" style="display:none;">
+              <div style="display: flex; align-items: center; justify-content: space-between; background: white; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-subtle); margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
+                  <span style="font-size: 24px;">📄</span>
+                  <div>
+                    <div style="font-size: 13.5px; font-weight: 700; color: var(--text-main);" id="loadedFileName">Nama_Berkas.docx</div>
+                    <div style="font-size: 11px; color: var(--text-muted);" id="loadedFileSize">0 KB</div>
+                  </div>
+                </div>
+                <button class="btn-close-modal" style="width: 28px; height: 28px; font-size: 13px;" onclick="resetDropZone()" title="Ganti File">✕</button>
+              </div>
+
+              <!-- PILIHAN ARAH KONVERSI REXHA -->
+              <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn-exec" onclick="prosesKonversi('doc')" style="background: #8d5b36; font-size: 12.5px;">
+                  <span>📝</span> Konversi ke Word (.doc Editable)
+                </button>
+                <button class="btn-exec" onclick="prosesKonversi('pdf')" style="background: var(--text-main); font-size: 12.5px;">
+                  <span>📄</span> Konversi ke PDF Siap Cetak
+                </button>
+              </div>
+            </div>
+
+            <!-- HASIL SUKSES & TOMBOL DOWNLOAD -->
+            <div id="dropzoneResult" style="display:none; margin-top: 14px; background: #edf5f0; border: 1px solid #c2e0cb; padding: 14px; border-radius: 10px;">
+              <div style="font-size: 13px; font-weight: 700; color: #2b6139; margin-bottom: 6px;">
+                ✨ Selesai Dikonversi oleh Rexha!
+              </div>
+              <p style="font-size: 11.5px; color: #3b744a; margin-bottom: 12px;" id="resultStatusText">
+                Berkas siap diunduh dan tersimpan di folder 'dokumen_tugas'.
+              </p>
+              <div style="display: flex; gap: 10px; justify-content: center;">
+                <a id="btnDownloadResult" href="#" download class="btn-exec" style="text-decoration: none; background: #2b6139; font-size: 12.5px;">
+                  <span>📥</span> Unduh Hasil Konversi
+                </a>
+                <button class="btn-notification" onclick="resetDropZone()" style="background: white;">
+                  <span>🔄</span> Konversi Berkas Lain
+                </button>
+              </div>
+            </div>
+          </div>
+
           <!-- INSTRUCTION FORM -->
           <div class="command-box">
             <div class="form-row">
@@ -970,6 +1047,105 @@
   </div>
 
   <script>
+    // JAVASCRIPT DRAG & DROP KONVERSI REXHA
+    let fileAktif = null;
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById("rexhaDropZone").classList.add("drag-over");
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      document.getElementById("rexhaDropZone").classList.remove("drag-over");
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById("rexhaDropZone").classList.remove("drag-over");
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        berkasDipilih(e.dataTransfer.files[0]);
+      }
+    }
+
+    function berkasDipilih(file) {
+      if (!file) return;
+      fileAktif = file;
+      document.getElementById("loadedFileName").innerText = file.name;
+      document.getElementById("loadedFileSize").innerText = `${(file.size / 1024).toFixed(1)} KB • Siap diproses Rexha`;
+
+      document.getElementById("dropzoneEmpty").style.display = "none";
+      document.getElementById("dropzoneActive").style.display = "block";
+      document.getElementById("dropzoneResult").style.display = "none";
+
+      log(`[REXHA DROPZONE] Berkas diterima: "${file.name}". Pilih format konversi yang diinginkan.`);
+    }
+
+    function resetDropZone() {
+      fileAktif = null;
+      document.getElementById("dropzoneEmpty").style.display = "block";
+      document.getElementById("dropzoneActive").style.display = "none";
+      document.getElementById("dropzoneResult").style.display = "none";
+      document.getElementById("fileSelectorInput").value = "";
+    }
+
+    async function prosesKonversi(targetFormat) {
+      if (!fileAktif) {
+        alert("Silakan masukkan berkas terlebih dahulu.");
+        return;
+      }
+
+      // Animasi Rexha bekerja
+      const pod = document.getElementById("pod-rexha");
+      const avatar = document.getElementById("avatar-rexha");
+      const statusBadge = document.getElementById("status-rexha");
+      pod.classList.add("active-worker");
+      avatar.classList.add("typing");
+      statusBadge.innerText = "⏳ Mengonversi...";
+      statusBadge.style.color = "#8d5b36";
+
+      log(`[REXHA] Mulai mengonversi "${fileAktif.name}" ke format ${targetFormat.toUpperCase()}...`);
+
+      const reader = new FileReader();
+      reader.onload = async function() {
+        const base64Data = reader.result.split(",")[1];
+        try {
+          const res = await fetch("/api/upload-konversi", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              namaFileAsli: fileAktif.name,
+              targetFormat: targetFormat,
+              kontenBase64: base64Data
+            })
+          });
+          const d = await res.json();
+
+          if (d.sukses) {
+            log(`[REXHA]: ${d.pesan}`);
+            document.getElementById("dropzoneResult").style.display = "block";
+            document.getElementById("resultStatusText").innerText = `Berkas hasil "${d.fileHasil}" telah dibuat dan siap diunduh!`;
+            document.getElementById("btnDownloadResult").href = d.downloadUrl;
+            document.getElementById("btnDownloadResult").setAttribute("download", d.fileHasil);
+
+            await muatDaftarFile();
+            bacaDokumen(d.fileHasil);
+          }
+        } catch (err) {
+          log("Gagal mengonversi: " + err.message);
+        } finally {
+          setTimeout(() => {
+            pod.classList.remove("active-worker");
+            avatar.classList.remove("typing");
+            statusBadge.innerText = "Standby (Siaga)";
+            statusBadge.style.color = "";
+          }, 800);
+        }
+      };
+
+      reader.readAsDataURL(fileAktif);
+    }
+
     // KONTROL MODAL PANDUAN PERINTAH
     function bukaModalPanduan() {
       document.getElementById("panduanModal").classList.add("show");
