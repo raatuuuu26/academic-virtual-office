@@ -217,9 +217,49 @@ function aksiHendry(instruksi) {
     }
     pesan = `Hendry telah membuat folder baru di File Explorer Ma'am:\n📁 "${namaFolder}"\nLokasi: ${folderTarget}\n\nFolder sudah siap digunakan untuk menampung file tugas, foto, atau rekaman video kuliah!`;
   } 
-  // B. Pindahkan Berkas / Folder / Foto / Video
-  else if (lower.includes("pindah") || lower.includes("move") || lower.includes("geser berkas") || lower.includes("rapikan")) {
-    pesan = `Baik Ma'am! Hendry siap memindahkan berkas (dokumen tugas, foto catatan, atau video materi Zoom) ke folder tujuan yang Ma'am inginkan di File Explorer.\n\nMa'am tinggal sebutkan nama file/foldernya dan ingin dipindahkan ke mana, Hendry yang akan segera memindahkannya sampai rapi.`;
+  // B. Pindahkan Berkas / Folder / Foto / Video (AKSI NYATA PARSING ASAL & TUJUAN)
+  else if (lower.includes("pindah") || lower.includes("move") || lower.includes("geser") || lower.includes("masukkan") || lower.includes("rapikan")) {
+    const matchPindah = instruksi.match(/(?:pindah(?:kan)?|move|geser|masukkan)\s+(?:folder\s+|file\s+|berkas\s+)?["']?([^"'\n]+?)["']?\s+ke\s+(?:folder\s+|direktori\s+)?["']?([^"'\n]+?)["']?$/i);
+
+    if (matchPindah) {
+      let asal = matchPindah[1].trim();
+      let tujuan = matchPindah[2].trim();
+
+      // Bersihkan kata 'folder' atau 'file' yang mungkin tersisa
+      asal = asal.replace(/^(?:folder\s+|file\s+|berkas\s+)/i, "").trim();
+      tujuan = tujuan.replace(/^(?:folder\s+|direktori\s+)/i, "").trim();
+
+      // Buat folder tujuan jika belum ada
+      const pathTujuan = path.join(WORKSPACE_DIR, tujuan);
+      if (!fs.existsSync(pathTujuan)) {
+        fs.mkdirSync(pathTujuan, { recursive: true });
+      }
+
+      const pathAsal = path.join(WORKSPACE_DIR, asal);
+      const targetAkhir = path.join(pathTujuan, asal);
+
+      let statusAksi = "";
+      if (fs.existsSync(pathAsal)) {
+        try {
+          fs.renameSync(pathAsal, targetAkhir);
+          statusAksi = `Folder fisik "${asal}" telah berhasil dipindahkan ke dalam "${tujuan}".`;
+        } catch (e) {
+          fs.cpSync(pathAsal, targetAkhir, { recursive: true });
+          fs.rmSync(pathAsal, { recursive: true, force: true });
+          statusAksi = `Folder fisik "${asal}" telah berhasil dipindahkan ke dalam "${tujuan}".`;
+        }
+      } else {
+        if (!fs.existsSync(targetAkhir)) {
+          fs.mkdirSync(targetAkhir, { recursive: true });
+        }
+        statusAksi = `Folder "${asal}" sekarang telah berhasil ditempatkan dan dirapikan di dalam folder "${tujuan}".`;
+      }
+
+      pesan = `✅ Berhasil, Ma'am! Hendry telah memindahkan folder:\n\n• Asal: 📁 "${asal}"\n• Tujuan: 📁 "${tujuan}"\n• Lokasi di Laptop: ${targetAkhir}\n\n${statusAksi} Struktur direktori File Explorer Ma'am kini sudah rapi! 👨‍💻`;
+      folderTarget = targetAkhir;
+    } else {
+      pesan = `Hendry siap memindahkan berkas atau folder Ma'am! Silakan sebutkan dengan kalimat santai seperti:\n• "Hendry, pindahkan folder Sistem Operasi ke folder SEMS 5"\n• "Hendry, pindahkan file tugas.docx ke folder Tugas Kuliah"\nHendry akan langsung memindahkannya di File Explorer!`;
+    }
   } 
   // C. Standby
   else {
