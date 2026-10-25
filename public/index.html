@@ -745,7 +745,7 @@
   <!-- ============================================================
        MODAL BUKU PANDUAN PERINTAH (CHEATSHEET)
        ============================================================ -->
-  <div class="modal-backdrop" id="panduanModal">
+  <div class="modal-backdrop" id="panduanModal" onclick="if(event.target === this) tutupModalPanduan()">
     <div class="center-notification-box" style="max-width: 650px;">
       <div class="modal-header-bar">
         <div class="reminder-sender">
@@ -804,7 +804,7 @@
   <!-- ============================================================
        POPUP NOTIFIKASI DI TENGAH LAYAR (MODAL CENTER SCREEN)
        ============================================================ -->
-  <div class="modal-backdrop show" id="centerNotificationModal">
+  <div class="modal-backdrop show" id="centerNotificationModal" onclick="if(event.target === this) tutupNotifikasiModal()">
     <div class="center-notification-box">
       <!-- Header dengan Pengirim & Tombol X Close -->
       <div class="modal-header-bar">
@@ -1378,31 +1378,6 @@
           statusBadge.style.color = "";
         }, 800);
       }
-    }
-
-          if (d.sukses) {
-            log(`[REXHA]: ${d.pesan}`);
-            document.getElementById("dropzoneResult").style.display = "block";
-            document.getElementById("resultStatusText").innerText = `Berkas hasil "${d.fileHasil}" telah dibuat dan siap diunduh!`;
-            document.getElementById("btnDownloadResult").href = d.downloadUrl;
-            document.getElementById("btnDownloadResult").setAttribute("download", d.fileHasil);
-
-            await muatDaftarFile();
-            bacaDokumen(d.fileHasil);
-          }
-        } catch (err) {
-          log("Gagal mengonversi: " + err.message);
-        } finally {
-          setTimeout(() => {
-            pod.classList.remove("active-worker");
-            avatar.classList.remove("typing");
-            statusBadge.innerText = "Standby (Siaga)";
-            statusBadge.style.color = "";
-          }, 800);
-        }
-      };
-
-      reader.readAsDataURL(fileAktif);
     }
 
     // KONTROL MODAL PANDUAN PERINTAH
