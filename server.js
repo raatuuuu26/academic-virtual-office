@@ -303,23 +303,36 @@ function buatRangkumanMateriHendry(topik, instruksi, namaFileAsli = "") {
     ];
   }
 
-  // File HTML Rangkuman Minimalist Aesthetic
-  const isiHtml = `<!DOCTYPE html>
-<html lang="id">
+  // Format Dokumen Microsoft Word (.doc) Rangkuman Minimalist Aesthetic
+  const isiDoc = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <title>Study Notes - ${judulMateri}</title>
+  <!--[if gte mso 9]>
+  <xml>
+    <w:WordDocument>
+      <w:View>Print</w:View>
+      <w:Zoom>100</w:Zoom>
+      <w:DoNotOptimizeForBrowser/>
+    </w:WordDocument>
+  </xml>
+  <![endif]-->
   <style>
-    body { font-family: 'Plus Jakarta Sans', Arial, sans-serif; line-height: 1.6; color: #2c2724; background: #fbf9f5; padding: 40px; max-width: 820px; margin: auto; }
-    .card { background: white; border: 1px solid #e8e1d5; border-radius: 14px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 24px; }
-    .header-box { border-bottom: 2px solid #8d5b36; padding-bottom: 14px; margin-bottom: 20px; }
-    h1 { font-size: 18pt; color: #2c2724; margin: 0 0 8px 0; text-transform: uppercase; }
-    .meta { font-size: 10pt; color: #786f66; line-height: 1.5; }
-    h2 { font-size: 13pt; color: #8d5b36; border-left: 4px solid #8d5b36; padding-left: 10px; margin: 20px 0 10px 0; }
-    ul, ol { padding-left: 20px; margin-bottom: 14px; }
-    li { margin-bottom: 8px; font-size: 11pt; }
-    .flashcard { background: #faf6f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; border-left: 3px solid #627d98; font-size: 10.5pt; }
-    .footer-badge { text-align: center; font-size: 9.5pt; color: #999; margin-top: 30px; }
+    @page {
+      size: 21.0cm 29.7cm;
+      margin: 2.5cm 2.5cm 2.5cm 2.5cm;
+      mso-page-orientation: portrait;
+    }
+    body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #2c2724; background: #ffffff; padding: 20px; }
+    .card { background: white; border: 1pt solid #e8e1d5; border-radius: 8pt; padding: 24pt; margin-bottom: 18pt; }
+    .header-box { border-bottom: 2pt solid #8d5b36; padding-bottom: 12pt; margin-bottom: 16pt; }
+    h1 { font-size: 16pt; color: #8d5b36; margin: 0 0 6pt 0; text-transform: uppercase; font-weight: bold; }
+    .meta { font-size: 9.5pt; color: #666666; line-height: 1.4; }
+    h2 { font-size: 12.5pt; color: #8d5b36; border-left: 3.5pt solid #8d5b36; padding-left: 8pt; margin: 16pt 0 8pt 0; font-weight: bold; }
+    ul, ol { padding-left: 20pt; margin-bottom: 12pt; }
+    li { margin-bottom: 6pt; font-size: 11pt; }
+    .flashcard { background-color: #f7f3ed; border: 1pt solid #e2d9cd; border-left: 3.5pt solid #627d98; border-radius: 4pt; padding: 8pt 12pt; margin-bottom: 8pt; font-size: 10.5pt; }
+    .footer-badge { text-align: center; font-size: 9pt; color: #888888; margin-top: 24pt; border-top: 0.5pt solid #dddddd; padding-top: 8pt; }
   </style>
 </head>
 <body>
@@ -346,16 +359,16 @@ function buatRangkumanMateriHendry(topik, instruksi, namaFileAsli = "") {
       </div>
     `).join("")}
 
-    <h2>3. 💡 Tips Mengingat dari Hendry</h2>
-    <p>Pelajari <b>Poin Kunci</b> di atas 15 menit sebelum kelas atau ujian. Fokuskan pada pemahaman istilah teknis dan perbedaannya, bukan sekadar menghafal kata per kata.</p>
+    <h2>3. 💡 Tips Belajar & Mengingat dari Hendry</h2>
+    <p>Pelajari <b>Poin Kunci</b> di atas 15 menit sebelum kelas atau ujian. Fokuskan pada pemahaman istilah teknis dan perbedaannya langsung di dokumen Microsoft Word ini.</p>
   </div>
   <div class="footer-badge">
-    Disusun khusus untuk Ma'am • Academic Virtual Office
+    Disusun khusus untuk Ma'am • Format Dokumen Microsoft Word (.doc) Siap Edit
   </div>
 </body>
 </html>`;
 
-  return { judulMateri, poinKonsep, kisiKisiUjian, isiHtml };
+  return { judulMateri, poinKonsep, kisiKisiUjian, isiDoc };
 }
 
 function aksiHendry(instruksi) {
@@ -374,17 +387,17 @@ function aksiHendry(instruksi) {
   }
 
   const cleanSlug = topik.replace(/[^a-zA-Z0-9]/g, "_").replace(/_+/g, "_").replace(/^_|_$/g, "");
-  const { judulMateri, poinKonsep, isiHtml } = buatRangkumanMateriHendry(topik, instruksi);
-  const namaFile = `RANGKUMAN_${cleanSlug}_${timestamp}.html`;
+  const { judulMateri, poinKonsep, isiDoc } = buatRangkumanMateriHendry(topik, instruksi);
+  const namaFile = `RANGKUMAN_${cleanSlug}_${timestamp}.doc`;
   const pathFile = path.join(DOKUMEN_DIR, namaFile);
 
-  fs.writeFileSync(pathFile, isiHtml, "utf-8");
+  fs.writeFileSync(pathFile, isiDoc, "utf-8");
 
   const ringkasanSingkat = poinKonsep.slice(0, 3).map(p => `• ${p.replace(/<[^>]*>/g, "")}`).join("\n");
 
-  const pesan = `📚 Selesai, Ma'am! Hendry telah menyusun Catatan Belajar & Cheat Sheet untuk:\n"${judulMateri}"\n\n📌 Intisari Poin Kunci:\n${ringkasanSingkat}\n\nDokumen lengkap telah Hendry simpan di folder 'dokumen_tugas' sebagai "${namaFile}" dan siap Ma'am pelajari atau unduh! 👨‍💻`;
+  const pesan = `📚 Selesai, Ma'am! Hendry telah menyusun Catatan Belajar & Cheat Sheet untuk:\n"${judulMateri}"\n\n📌 Intisari Poin Kunci:\n${ringkasanSingkat}\n\nDokumen lengkap telah Hendry simpan dalam format Microsoft Word (.doc) di folder 'dokumen_tugas' sebagai "${namaFile}" dan siap Ma'am buka di Word atau unduh! 👨‍💻`;
 
-  return { namaFile, pathFile, pesan, isi: isiHtml };
+  return { namaFile, pathFile, pesan, isi: isiDoc };
 }
 
 // 3. AKSI CANTIKA (Sekretaris Pribadi & Pengingat / Pengubah Jadwal Pintar)
@@ -662,11 +675,11 @@ const server = http.createServer((req, res) => {
         const sekarang = new Date();
         const baseName = path.parse(namaFileAsli).name;
         
-        const { judulMateri, poinKonsep, kisiKisiUjian, isiHtml } = buatRangkumanMateriHendry(baseName, instruksiTambahan || "", namaFileAsli);
+        const { judulMateri, poinKonsep, kisiKisiUjian, isiDoc } = buatRangkumanMateriHendry(baseName, instruksiTambahan || "", namaFileAsli);
         
-        const fileHasil = `RANGKUMAN_${baseName.replace(/[^a-zA-Z0-9]/g, "_")}.html`;
+        const fileHasil = `RANGKUMAN_${baseName.replace(/[^a-zA-Z0-9]/g, "_")}.doc`;
         const pathHasil = path.join(DOKUMEN_DIR, fileHasil);
-        fs.writeFileSync(pathHasil, isiHtml, "utf-8");
+        fs.writeFileSync(pathHasil, isiDoc, "utf-8");
 
         const ringkasanTeks = poinKonsep.map(p => p.replace(/<[^>]*>/g, "")).join("\n• ");
 
@@ -677,7 +690,7 @@ const server = http.createServer((req, res) => {
           judulMateri,
           ringkasanTeks: "• " + ringkasanTeks,
           downloadUrl: `/api/download?nama=${encodeURIComponent(fileHasil)}`,
-          pesan: `Hendry berhasil merangkum berkas "${namaFileAsli}" menjadi Study Notes & Cheat Sheet Ujian!`
+          pesan: `Hendry berhasil merangkum berkas "${namaFileAsli}" menjadi dokumen Microsoft Word (.doc) siap edit!`
         }));
       } catch (err) {
         res.writeHead(400, { "Content-Type": "application/json" });
@@ -696,10 +709,8 @@ const server = http.createServer((req, res) => {
       if (namaFile.endsWith(".pdf")) {
         res.writeHead(200, { "Content-Type": "application/pdf" });
         res.end(fs.readFileSync(fullPath));
-      } else if (namaFile.endsWith(".doc")) {
-        res.writeHead(200, { "Content-Type": "application/msword; charset=utf-8" });
-        res.end(fs.readFileSync(fullPath));
       } else {
+        // Berkas .doc dan .html dirender sebagai HTML di iframe pratinjau agar bisa langsung dibaca
         res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
         res.end(fs.readFileSync(fullPath));
       }

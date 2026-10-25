@@ -1,0 +1,74 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta charset="utf-8">
+  <title>Study Notes - RANGKUMAN STUDI: MODUL_KULIAH_SISTEM_OPERASI</title>
+  <!--[if gte mso 9]>
+  <xml>
+    <w:WordDocument>
+      <w:View>Print</w:View>
+      <w:Zoom>100</w:Zoom>
+      <w:DoNotOptimizeForBrowser/>
+    </w:WordDocument>
+  </xml>
+  <![endif]-->
+  <style>
+    @page {
+      size: 21.0cm 29.7cm;
+      margin: 2.5cm 2.5cm 2.5cm 2.5cm;
+      mso-page-orientation: portrait;
+    }
+    body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #2c2724; background: #ffffff; padding: 20px; }
+    .card { background: white; border: 1pt solid #e8e1d5; border-radius: 8pt; padding: 24pt; margin-bottom: 18pt; }
+    .header-box { border-bottom: 2pt solid #8d5b36; padding-bottom: 12pt; margin-bottom: 16pt; }
+    h1 { font-size: 16pt; color: #8d5b36; margin: 0 0 6pt 0; text-transform: uppercase; font-weight: bold; }
+    .meta { font-size: 9.5pt; color: #666666; line-height: 1.4; }
+    h2 { font-size: 12.5pt; color: #8d5b36; border-left: 3.5pt solid #8d5b36; padding-left: 8pt; margin: 16pt 0 8pt 0; font-weight: bold; }
+    ul, ol { padding-left: 20pt; margin-bottom: 12pt; }
+    li { margin-bottom: 6pt; font-size: 11pt; }
+    .flashcard { background-color: #f7f3ed; border: 1pt solid #e2d9cd; border-left: 3.5pt solid #627d98; border-radius: 4pt; padding: 8pt 12pt; margin-bottom: 8pt; font-size: 10.5pt; }
+    .footer-badge { text-align: center; font-size: 9pt; color: #888888; margin-top: 24pt; border-top: 0.5pt solid #dddddd; padding-top: 8pt; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header-box">
+      <h1>📚 STUDY NOTES & CHEAT SHEET UJIAN</h1>
+      <div class="meta">
+        <strong>Disusun oleh:</strong> Hendry (Study Notes & Summary Specialist)<br>
+        <strong>Materi / Topik:</strong> RANGKUMAN STUDI: MODUL_KULIAH_SISTEM_OPERASI<br>
+        <strong>Berkas Rujukan:</strong> Modul_Kuliah_Sistem_Operasi.pdf<br>
+        <strong>Waktu Rangkum:</strong> 25/10/2026, 12.00.01
+      </div>
+    </div>
+
+    <h2>1. 📌 Intisari Konsep & Poin-Poin Kunci</h2>
+    <ul>
+      <li><b>Intisari Utama:</b> Pembahasan komprehensif terkait topik Modul_Kuliah_Sistem_Operasi dengan fokus pada prinsip dasar, metodologi, dan penerapannya di dunia nyata.</li>
+      <li><b>Struktur Landasan:</b> Memahami keterkaitan antara teori formal dengan implementasi praktis di lapangan.</li>
+      <li><b>Faktor Penentu:</b> Analisis terhadap variabel-variabel kunci yang mempengaruhi keberhasilan topik ini.</li>
+      <li><b>Evaluasi Kritis:</b> Menemukan kelebihan dan batasan dari konsep yang diajarkan.</li>
+    </ul>
+
+    <h2>2. 🎯 Kisi-Kisi Tanya Jawab Persiapan Ujian (Exam Takeaways)</h2>
+    
+      <div class="flashcard">
+        <b>Q1:</b> Jelaskan definisi fundamental dan ruang lingkup dari Modul_Kuliah_Sistem_Operasi!
+      </div>
+    
+      <div class="flashcard">
+        <b>Q2:</b> Sebutkan 3 studi kasus nyata di mana konsep ini diterapkan!
+      </div>
+    
+      <div class="flashcard">
+        <b>Q3:</b> Bagaimana menganalisis kelemahan dari metode ini saat menghadapi situasi kompleks?
+      </div>
+    
+
+    <h2>3. 💡 Tips Belajar & Mengingat dari Hendry</h2>
+    <p>Pelajari <b>Poin Kunci</b> di atas 15 menit sebelum kelas atau ujian. Fokuskan pada pemahaman istilah teknis dan perbedaannya langsung di dokumen Microsoft Word ini.</p>
+  </div>
+  <div class="footer-badge">
+    Disusun khusus untuk Ma'am • Format Dokumen Microsoft Word (.doc) Siap Edit
+  </div>
+</body>
+</html>

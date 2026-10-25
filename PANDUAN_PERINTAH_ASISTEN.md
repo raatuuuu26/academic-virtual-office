@@ -33,7 +33,7 @@ Rexha bertugas mengurus berkas dokumen, format margin 4-3-3-3 standar kampus, da
 
 ## 3. 👨‍💻 HENDRY (Study Notes & Summary Specialist)
 
-Hendry bertugas merangkum berkas materi kuliah (modul, slide PPT, dokumen PDF/Word) menjadi poin-poin penting, intisari konsep, dan cheat sheet / kisi-kisi tanya jawab untuk persiapan ujian Ma'am.
+Hendry bertugas merangkum berkas materi kuliah (modul, slide PPT, dokumen PDF/Word) menjadi dokumen Microsoft Word (.doc) yang rapi, berisi intisari konsep dan cheat sheet / kisi-kisi tanya jawab untuk persiapan ujian Ma'am (bisa langsung dibuka & diedit di Microsoft Word).
 
 | Apa yang Ingin Dilakukan | Contoh Perintah Bebas yang Bisa Diketik |
 | :--- | :--- |
