@@ -1240,13 +1240,26 @@
     }
 
     async function eksekusiInstruksi() {
-      const asistenId = document.getElementById("select-asisten").value;
+      let asistenId = document.getElementById("select-asisten").value;
       const input = document.getElementById("input-instruksi");
       const instruksi = input.value.trim();
 
       if (!instruksi) {
         alert("Silakan masukkan instruksi untuk asisten Anda, Ma'am.");
         return;
+      }
+
+      // SMART AUTO-DETECT ASISTEN (Pindah otomatis ke asisten yang tepat)
+      const low = instruksi.toLowerCase();
+      if (low.includes("hendry") || low.includes("pindah") || low.includes("move") || (low.includes("folder") && !low.includes("cover"))) {
+        asistenId = "hendry";
+        document.getElementById("select-asisten").value = "hendry";
+      } else if (low.includes("rexha") || low.includes("pdf") || low.includes("doc") || low.includes("word") || low.includes("cover")) {
+        asistenId = "rexha";
+        document.getElementById("select-asisten").value = "rexha";
+      } else if (low.includes("cantika") || low.includes("jadwal") || low.includes("kuliah")) {
+        asistenId = "cantika";
+        document.getElementById("select-asisten").value = "cantika";
       }
 
       const btn = document.getElementById("btn-submit");

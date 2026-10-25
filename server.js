@@ -205,31 +205,22 @@ function aksiHendry(instruksi) {
   let pesan = "";
   let folderTarget = "";
 
-  // A. Buat Folder Baru di File Explorer
-  if (lower.includes("buat folder") || lower.includes("bikin folder") || lower.includes("folder baru")) {
-    const match = instruksi.match(/folder\s+(?:baru\s+)?["']?([^"'\n,]+)["']?/i);
-    const namaFolder = match && match[1] ? match[1].trim() : "Folder_Kuliah_Baru";
-    
-    // Default buat di workspace atau folder tujuan
-    folderTarget = path.join(WORKSPACE_DIR, namaFolder);
-    if (!fs.existsSync(folderTarget)) {
-      fs.mkdirSync(folderTarget, { recursive: true });
-    }
-    pesan = `Hendry telah membuat folder baru di File Explorer Ma'am:\n📁 "${namaFolder}"\nLokasi: ${folderTarget}\n\nFolder sudah siap digunakan untuk menampung file tugas, foto, atau rekaman video kuliah!`;
-  } 
-  // B. Pindahkan Berkas / Folder / Foto / Video (AKSI NYATA PARSING ASAL & TUJUAN)
-  else if (lower.includes("pindah") || lower.includes("move") || lower.includes("geser") || lower.includes("masukkan") || lower.includes("rapikan")) {
-    const matchPindah = instruksi.match(/(?:pindah(?:kan)?|move|geser|masukkan)\s+(?:folder\s+|file\s+|berkas\s+)?["']?([^"'\n]+?)["']?\s+ke\s+(?:folder\s+|direktori\s+)?["']?([^"'\n]+?)["']?$/i);
+  // Bersihkan tanda baca dan kata sambung di akhir kalimat
+  let cleanText = instruksi.replace(/[.,!?]+$/, '').trim();
+  cleanText = cleanText.replace(/\s+(?:ya|dong|deh|nih|tolong|sekarang)$/i, '').trim();
+
+  // A. Pindahkan Berkas / Folder (PARSING CERDAS & ROBUST)
+  if (lower.includes("pindah") || lower.includes("move") || lower.includes("geser") || lower.includes("masukkan")) {
+    const matchPindah = cleanText.match(/(?:pindah(?:kan)?|move|geser|masukkan)\s+(.+?)\s+ke\s+(.+)$/i);
 
     if (matchPindah) {
       let asal = matchPindah[1].trim();
       let tujuan = matchPindah[2].trim();
 
-      // Bersihkan kata 'folder' atau 'file' yang mungkin tersisa
-      asal = asal.replace(/^(?:folder\s+|file\s+|berkas\s+)/i, "").trim();
-      tujuan = tujuan.replace(/^(?:folder\s+|direktori\s+)/i, "").trim();
+      // Bersihkan kata 'folder' atau 'file' atau tanda kutip
+      asal = asal.replace(/^(?:folder\s+|file\s+|berkas\s+)/i, "").replace(/['"]/g, "").trim();
+      tujuan = tujuan.replace(/^(?:folder\s+|direktori\s+)/i, "").replace(/['"]/g, "").trim();
 
-      // Buat folder tujuan jika belum ada
       const pathTujuan = path.join(WORKSPACE_DIR, tujuan);
       if (!fs.existsSync(pathTujuan)) {
         fs.mkdirSync(pathTujuan, { recursive: true });
@@ -257,15 +248,25 @@ function aksiHendry(instruksi) {
 
       pesan = `✅ Berhasil, Ma'am! Hendry telah memindahkan folder:\n\n• Asal: 📁 "${asal}"\n• Tujuan: 📁 "${tujuan}"\n• Lokasi di Laptop: ${targetAkhir}\n\n${statusAksi} Struktur direktori File Explorer Ma'am kini sudah rapi! 👨‍💻`;
       folderTarget = targetAkhir;
-    } else {
-      pesan = `Hendry siap memindahkan berkas atau folder Ma'am! Silakan sebutkan dengan kalimat santai seperti:\n• "Hendry, pindahkan folder Sistem Operasi ke folder SEMS 5"\n• "Hendry, pindahkan file tugas.docx ke folder Tugas Kuliah"\nHendry akan langsung memindahkannya di File Explorer!`;
+      return { pesan, folderTarget, asal, tujuan };
     }
-  } 
-  // C. Standby
-  else {
-    pesan = `Hendry siap bertugas mengelola File Explorer laptop Ma'am! Hendry bisa:\n• Membuat folder mata kuliah baru\n• Memindahkan file dokumen (.pdf / .docx)\n• Memindahkan foto catatan materi kuliah\n• Memindahkan video rekaman perkuliahan ke folder yang Ma'am tentukan.`;
   }
 
+  // B. Buat Folder Baru
+  if (lower.includes("buat folder") || lower.includes("bikin folder") || lower.includes("folder baru")) {
+    const match = cleanText.match(/folder\s+(?:baru\s+)?["']?([^"'\n,]+)["']?/i);
+    const namaFolder = match && match[1] ? match[1].replace(/['"]/g, '').trim() : "Folder_Kuliah_Baru";
+    
+    folderTarget = path.join(WORKSPACE_DIR, namaFolder);
+    if (!fs.existsSync(folderTarget)) {
+      fs.mkdirSync(folderTarget, { recursive: true });
+    }
+    pesan = `Hendry telah membuat folder baru di File Explorer Ma'am:\n📁 "${namaFolder}"\nLokasi: ${folderTarget}\n\nFolder sudah siap digunakan untuk menampung file tugas, foto, atau rekaman video kuliah!`;
+    return { pesan, folderTarget };
+  }
+
+  // C. Standby
+  pesan = `Hendry siap memindahkan berkas atau folder Ma'am! Contoh kalimat:\n• "pindahkan folder Sistem Operasi ke folder SEMS 5"\n• "buatkan folder baru Catatan Kuliah"\nHendry akan langsung mengeksekusinya di File Explorer laptop Ma'am!`;
   return { pesan, folderTarget };
 }
 
@@ -563,13 +564,25 @@ const server = http.createServer((req, res) => {
     req.on("data", c => body += c);
     req.on("end", () => {
       try {
-        const { karyawanId, instruksi } = JSON.parse(body);
+        let { karyawanId, instruksi } = JSON.parse(body);
         const dataAkademik = bacaDataAkademik();
         let respon = {};
 
-        if (karyawanId === "rexha") {
+        // SMART INTENT ROUTING (Otomatis arahkan ke asisten yang tepat meskipun dropdown salah)
+        const lowText = (instruksi || "").toLowerCase();
+        let targetId = karyawanId;
+
+        if (lowText.includes("hendry") || lowText.includes("pindah") || lowText.includes("move") || (lowText.includes("folder") && !lowText.includes("cover"))) {
+          targetId = "hendry";
+        } else if (lowText.includes("rexha") || lowText.includes("pdf") || lowText.includes("doc") || lowText.includes("word") || lowText.includes("cover")) {
+          targetId = "rexha";
+        } else if (lowText.includes("cantika") || lowText.includes("jadwal") || lowText.includes("kuliah")) {
+          targetId = "cantika";
+        }
+
+        if (targetId === "rexha") {
           respon = aksiRexha(instruksi);
-        } else if (karyawanId === "hendry") {
+        } else if (targetId === "hendry") {
           respon = aksiHendry(instruksi);
         } else {
           const pesanCantika = aksiCantika(instruksi, dataAkademik);
