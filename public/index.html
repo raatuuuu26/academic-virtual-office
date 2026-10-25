@@ -497,7 +497,42 @@
       opacity: 1;
     }
 
-    /* DRAG & DROP ZONE REXHA */
+    /* WORKSTATION TABS & DRAG-DROP ZONES */
+    .workstation-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      background: white;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .tab-btn:hover {
+      background: #fdfaf6;
+      border-color: var(--border-focus);
+      color: var(--text-main);
+    }
+    .tab-btn.active {
+      background: #f4ece1;
+      border-color: #8d5b36;
+      color: #2c2724;
+      box-shadow: 0 2px 6px rgba(141, 91, 54, 0.12);
+    }
+
+    /* DRAG & DROP ZONE */
     .drop-zone-card {
       background: #fdfbf7;
       border: 2px dashed #d5c8b8;
@@ -752,11 +787,11 @@
 
         <!-- PANDUAN HENDRY -->
         <div style="background: var(--surface-soft); border-left: 3px solid var(--wood-brown); padding: 12px; border-radius: 6px;">
-          <h4 style="font-size: 14px; color: var(--wood-brown); margin-bottom: 6px;">📂 3. Hendry (File Explorer & Storage Organizer)</h4>
+          <h4 style="font-size: 14px; color: var(--wood-brown); margin-bottom: 6px;">📚 3. Hendry (Study Notes & Summary Specialist)</h4>
           <ul style="font-size: 12px; line-height: 1.6; padding-left: 18px; color: var(--text-main);">
-            <li><b>Buat Folder di File Explorer:</b> <i>"Hendry, buatkan folder baru Catatan dan Materi Kuliah"</i></li>
-            <li><b>Pindahkan File / Folder:</b> <i>"Hendry, pindahkan file tugas ke folder Arsip"</i></li>
-            <li><b>Rapikan Foto & Video Kuliah:</b> <i>"Hendry, tolong rapikan foto materi catatan dan video rekaman Zoom"</i></li>
+            <li><b>Rangkum Berkas Materi / Slide:</b> <i>"Hendry, tolong rangkum file modul Cloud Computing ini dan susun intisari poin pentingnya"</i></li>
+            <li><b>Buat Kisi-Kisi & Cheat Sheet Ujian:</b> <i>"Hendry, tolong susun cheat sheet dan kisi-kisi tanya jawab untuk ujian PBO"</i></li>
+            <li><b>Tarik & Jatuhkan File:</b> Drop file modul (.pdf, .docx, .pptx, .txt) langsung ke Workstation Hendry untuk langsung dirangkum otomatis!</li>
           </ul>
         </div>
       </div>
@@ -888,14 +923,14 @@
 
             <!-- 2. HENDRY -->
             <div class="desk-pod pod-hendry" id="pod-hendry">
-              <div class="speech-bubble" id="bubble-hendry">Merapikan File Explorer... 📂</div>
+              <div class="speech-bubble" id="bubble-hendry">Merangkum Materi Kuliah... 📚</div>
               <div class="avatar-frame" id="avatar-hendry">
                 <img src="/avatars/hendry.jpg" alt="Hendry" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
               </div>
               <div class="worker-name">Hendry</div>
-              <div class="worker-role">File & Storage Organizer</div>
-              <div class="desk-surface">Coklat Kayu 💻 📂</div>
-              <p class="worker-details">Kemeja lengan panjang rapi, kacamata tebal, fokus & cekatan mengelola File Explorer.</p>
+              <div class="worker-role">Study Notes & Summarizer</div>
+              <div class="desk-surface">Coklat Kayu 📚 ☕</div>
+              <p class="worker-details">Kemeja panjang, kacamata tebal, merangkum file modul/slide kuliah jadi poin penting & kisi-kisi ujian.</p>
               <span class="worker-status" id="status-hendry">Standby (Siaga)</span>
             </div>
 
@@ -913,7 +948,17 @@
             </div>
           </div> <!-- PENUTUP EMPLOYEES-ROW (3 KOLOM SEIMBANG) -->
 
-          <!-- KOTAK DRAG & DROP KONVERSI REXHA -->
+          <!-- WORKSTATION NAVIGATION TABS -->
+          <div class="workstation-nav">
+            <button id="tabBtnRexha" class="tab-btn active" onclick="switchWorkstationTab('rexha')">
+              <span>👩‍💼</span> Workstation Rexha (Konversi DOC ⇄ PDF)
+            </button>
+            <button id="tabBtnHendry" class="tab-btn" onclick="switchWorkstationTab('hendry')">
+              <span>👨‍💻</span> Workstation Hendry (Rangkum Modul & Kisi-Kisi)
+            </button>
+          </div>
+
+          <!-- 1. KOTAK DRAG & DROP KONVERSI REXHA -->
           <div class="drop-zone-card" id="rexhaDropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
             <input type="file" id="fileSelectorInput" accept=".pdf,.doc,.docx,.txt" style="display:none;" onchange="berkasDipilih(this.files[0])">
             
@@ -930,7 +975,7 @@
               </button>
             </div>
 
-            <!-- TAMPILAN JIKA FILE SUDAH DIMASUKKAN -->
+            <!-- TAMPILAN JIKA FILE SUDAH DIMASUKKAN KE REXHA -->
             <div id="dropzoneActive" style="display:none;">
               <div style="display: flex; align-items: center; justify-content: space-between; background: white; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-subtle); margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
@@ -954,7 +999,7 @@
               </div>
             </div>
 
-            <!-- HASIL SUKSES & TOMBOL DOWNLOAD -->
+            <!-- HASIL SUKSES & TOMBOL DOWNLOAD REXHA -->
             <div id="dropzoneResult" style="display:none; margin-top: 14px; background: #edf5f0; border: 1px solid #c2e0cb; padding: 14px; border-radius: 10px;">
               <div style="font-size: 13px; font-weight: 700; color: #2b6139; margin-bottom: 6px;">
                 ✨ Selesai Dikonversi oleh Rexha!
@@ -973,13 +1018,74 @@
             </div>
           </div>
 
+          <!-- 2. KOTAK DRAG & DROP RANGKUMAN MATERI HENDRY -->
+          <div class="drop-zone-card" id="hendryDropZone" style="display:none;" ondragover="handleDragOverHendry(event)" ondragleave="handleDragLeaveHendry(event)" ondrop="handleDropHendry(event)">
+            <input type="file" id="hendryFileSelectorInput" accept=".pdf,.doc,.docx,.pptx,.txt" style="display:none;" onchange="berkasDipilihHendry(this.files[0])">
+            
+            <div id="hendryDropzoneEmpty">
+              <div style="font-size: 32px; margin-bottom: 8px;">📚 ➔ 📝</div>
+              <h3 style="font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--text-main);">
+                Workstation Rangkuman & Kisi-Kisi Hendry
+              </h3>
+              <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+                Tarik & jatuhkan berkas modul kuliah, slide, atau catatan Ma'am (<b>.pdf, .docx, .doc, .pptx, .txt</b>) ke sini:
+              </p>
+              <button class="btn-notification" onclick="document.getElementById('hendryFileSelectorInput').click()" style="margin: auto; background: white;">
+                <span>📚</span> Pilih Berkas Materi dari Laptop
+              </button>
+            </div>
+
+            <!-- TAMPILAN JIKA FILE SUDAH DIMASUKKAN KE HENDRY -->
+            <div id="hendryDropzoneActive" style="display:none;">
+              <div style="display: flex; align-items: center; justify-content: space-between; background: white; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-subtle); margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
+                  <span style="font-size: 24px;">📚</span>
+                  <div>
+                    <div style="font-size: 13.5px; font-weight: 700; color: var(--text-main);" id="loadedHendryFileName">Materi_Kuliah.pdf</div>
+                    <div style="font-size: 11px; color: var(--text-muted);" id="loadedHendryFileSize">0 KB</div>
+                  </div>
+                </div>
+                <button class="btn-close-modal" style="width: 28px; height: 28px; font-size: 13px;" onclick="resetHendryDropZone()" title="Ganti File">✕</button>
+              </div>
+
+              <!-- INPUT OPSIONAL UNTUK FOKUS RANGKUMAN -->
+              <div style="margin-bottom: 12px;">
+                <input type="text" id="instruksiTambahanHendry" placeholder="Fokus rangkuman (opsional: misal 'fokus bab 3, rumus, kisi-kisi UAS')..." style="width: 100%; box-sizing: border-box;">
+              </div>
+
+              <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn-exec" onclick="prosesRangkumHendry()" style="background: #8d5b36; font-size: 13px;">
+                  <span>📚</span> Rangkum & Susun Study Notes (Hendry)
+                </button>
+              </div>
+            </div>
+
+            <!-- HASIL SUKSES & TOMBOL DOWNLOAD HENDRY -->
+            <div id="hendryDropzoneResult" style="display:none; margin-top: 14px; background: #faf6f0; border: 1px solid #d5c8b8; padding: 14px; border-radius: 10px; text-align: left;">
+              <div style="font-size: 13px; font-weight: 700; color: #8d5b36; margin-bottom: 6px;">
+                ✨ Study Notes & Kisi-Kisi Berhasil Disusun oleh Hendry!
+              </div>
+              <div id="hendryResultTitle" style="font-weight: 700; font-size: 12.5px; color: var(--text-main); margin-bottom: 6px;"></div>
+              <div id="hendryResultPoints" style="font-size: 11.5px; color: var(--text-muted); white-space: pre-line; line-height: 1.5; background: white; padding: 10px; border-radius: 8px; border: 1px solid var(--border-subtle); margin-bottom: 12px; max-height: 120px; overflow-y: auto;"></div>
+              
+              <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a id="btnDownloadHendryResult" href="#" download class="btn-exec" style="text-decoration: none; background: #8d5b36; font-size: 12.5px;">
+                  <span>📥</span> Unduh Study Notes (.html)
+                </a>
+                <button class="btn-notification" onclick="resetHendryDropZone()" style="background: white;">
+                  <span>🔄</span> Rangkum Berkas Lain
+                </button>
+              </div>
+            </div>
+          </div>
+
           <!-- INSTRUCTION FORM -->
           <div class="command-box">
             <div class="form-row">
               <select id="select-asisten">
                 <option value="cantika">Tugaskan ke Cantika (Jadwal / Pengingat / Sapaan)</option>
                 <option value="rexha">Tugaskan ke Rexha (Konversi Dokumen / Buat PDF)</option>
-                <option value="hendry">Tugaskan ke Hendry (Pindahkan File / Folder / Foto / Video)</option>
+                <option value="hendry">Tugaskan ke Hendry (Rangkum Modul & Kisi-Kisi Ujian)</option>
               </select>
               <input type="text" id="input-instruksi" placeholder="Tulis arahan untuk asisten Anda, Ma'am...">
               <button class="btn-exec" id="btn-submit" onclick="eksekusiInstruksi()">
@@ -993,8 +1099,9 @@
               <button class="tag-chip" onclick="pilihCepat('cantika', 'Cantika, ubah jam kuliah PBO hari Senin minggu ini jadi jam 8 malam')">⚡ Ubah Jam PBO Minggu Ini</button>
               <button class="tag-chip" onclick="pilihCepat('rexha', 'Rexha, tolong ubah dokumen Word ini jadi PDF siap cetak')">📄 Word ➔ PDF (Rexha)</button>
               <button class="tag-chip" onclick="pilihCepat('rexha', 'Rexha, tolong konversi file PDF tugas ini ke format DOC Word agar bisa diedit')">📝 PDF ➔ Word/DOC (Rexha)</button>
-              <button class="tag-chip" onclick="pilihCepat('hendry', 'Hendry, pindahkan folder Sistem Operasi ke folder SEMS 5')">📂 Pindah Folder (Hendry)</button>
-              <button class="tag-chip" onclick="pilihCepat('hendry', 'Hendry, buatkan folder baru Catatan dan Materi Kuliah')">📁 Buat Folder (Hendry)</button>
+              <button class="tag-chip" onclick="pilihCepat('hendry', 'Hendry, tolong rangkum materi Cloud Computing ini dan buat kisi-kisi ujiannya')">📚 Rangkum Cloud Computing (Hendry)</button>
+              <button class="tag-chip" onclick="pilihCepat('hendry', 'Hendry, tolong susun cheat sheet dan poin penting materi PBO')">🎯 Cheat Sheet PBO (Hendry)</button>
+              <button class="tag-chip" onclick="pilihCepat('hendry', 'Hendry, tolong rangkum materi Cyber Security untuk persiapan kuis')">💡 Kisi-Kisi Cyber Security (Hendry)</button>
             </div>
 
             <!-- LIVE CONSOLE -->
@@ -1047,6 +1154,28 @@
   </div>
 
   <script>
+    // TAB SWITCHER WORKSTATION
+    function switchWorkstationTab(tab) {
+      const tabRexha = document.getElementById("tabBtnRexha");
+      const tabHendry = document.getElementById("tabBtnHendry");
+      const zoneRexha = document.getElementById("rexhaDropZone");
+      const zoneHendry = document.getElementById("hendryDropZone");
+
+      if (tab === "rexha") {
+        tabRexha.classList.add("active");
+        tabHendry.classList.remove("active");
+        zoneRexha.style.display = "block";
+        zoneHendry.style.display = "none";
+        document.getElementById("select-asisten").value = "rexha";
+      } else {
+        tabHendry.classList.add("active");
+        tabRexha.classList.remove("active");
+        zoneRexha.style.display = "none";
+        zoneHendry.style.display = "block";
+        document.getElementById("select-asisten").value = "hendry";
+      }
+    }
+
     // JAVASCRIPT DRAG & DROP KONVERSI REXHA
     let fileAktif = null;
 
@@ -1077,6 +1206,9 @@
       document.getElementById("dropzoneEmpty").style.display = "none";
       document.getElementById("dropzoneActive").style.display = "block";
       document.getElementById("dropzoneResult").style.display = "none";
+
+      document.getElementById("select-asisten").value = "rexha";
+      document.getElementById("input-instruksi").value = `Rexha, tolong konversi berkas "${file.name}"`;
 
       log(`[REXHA DROPZONE] Berkas diterima: "${file.name}". Pilih format konversi yang diinginkan.`);
     }
@@ -1120,6 +1252,133 @@
             })
           });
           const d = await res.json();
+
+          if (d.sukses) {
+            log(`[REXHA]: ${d.pesan}`);
+            document.getElementById("dropzoneResult").style.display = "block";
+            document.getElementById("resultStatusText").innerText = `Berkas hasil "${d.fileHasil}" telah dibuat dan siap diunduh!`;
+            document.getElementById("btnDownloadResult").href = d.downloadUrl;
+            document.getElementById("btnDownloadResult").setAttribute("download", d.fileHasil);
+
+            await muatDaftarFile();
+            bacaDokumen(d.fileHasil);
+          }
+        } catch (err) {
+          log("Gagal mengonversi: " + err.message);
+        } finally {
+          setTimeout(() => {
+            pod.classList.remove("active-worker");
+            avatar.classList.remove("typing");
+            statusBadge.innerText = "Standby (Siaga)";
+            statusBadge.style.color = "";
+          }, 800);
+        }
+      };
+
+      reader.readAsDataURL(fileAktif);
+    }
+
+    // JAVASCRIPT DRAG & DROP RANGKUMAN MATERI HENDRY 📚
+    let fileHendryAktif = null;
+
+    function handleDragOverHendry(e) {
+      e.preventDefault();
+      document.getElementById("hendryDropZone").classList.add("drag-over");
+    }
+
+    function handleDragLeaveHendry(e) {
+      e.preventDefault();
+      document.getElementById("hendryDropZone").classList.remove("drag-over");
+    }
+
+    function handleDropHendry(e) {
+      e.preventDefault();
+      document.getElementById("hendryDropZone").classList.remove("drag-over");
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        berkasDipilihHendry(e.dataTransfer.files[0]);
+      }
+    }
+
+    function berkasDipilihHendry(file) {
+      if (!file) return;
+      fileHendryAktif = file;
+      document.getElementById("loadedHendryFileName").innerText = file.name;
+      document.getElementById("loadedHendryFileSize").innerText = `${(file.size / 1024).toFixed(1)} KB • Siap dirangkum Hendry`;
+
+      document.getElementById("hendryDropzoneEmpty").style.display = "none";
+      document.getElementById("hendryDropzoneActive").style.display = "block";
+      document.getElementById("hendryDropzoneResult").style.display = "none";
+
+      // Pre-fill input instruksi chat bar agar Ma'am bisa langsung kirim / sesuaikan kalimat
+      document.getElementById("select-asisten").value = "hendry";
+      document.getElementById("input-instruksi").value = `Hendry, tolong rangkum file "${file.name}" dan buatkan intisari serta kisi-kisi ujiannya`;
+
+      log(`[HENDRY DROPZONE] Berkas materi diterima: "${file.name}". Klik tombol rangkum atau ketik instruksi tambahan.`);
+    }
+
+    function resetHendryDropZone() {
+      fileHendryAktif = null;
+      document.getElementById("hendryDropzoneEmpty").style.display = "block";
+      document.getElementById("hendryDropzoneActive").style.display = "none";
+      document.getElementById("hendryDropzoneResult").style.display = "none";
+      document.getElementById("hendryFileSelectorInput").value = "";
+      document.getElementById("instruksiTambahanHendry").value = "";
+    }
+
+    async function prosesRangkumHendry() {
+      if (!fileHendryAktif) {
+        alert("Silakan masukkan berkas materi kuliah terlebih dahulu.");
+        return;
+      }
+
+      const instruksiFokus = document.getElementById("instruksiTambahanHendry").value.trim();
+
+      // Animasi Hendry bekerja
+      const pod = document.getElementById("pod-hendry");
+      const avatar = document.getElementById("avatar-hendry");
+      const statusBadge = document.getElementById("status-hendry");
+      pod.classList.add("active-worker");
+      avatar.classList.add("typing");
+      statusBadge.innerText = "⏳ Sedang Merangkum...";
+      statusBadge.style.color = "#8d5b36";
+
+      log(`[HENDRY] Membaca dan merangkum berkas "${fileHendryAktif.name}"...`);
+
+      try {
+        const res = await fetch("/api/upload-rangkum", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            namaFileAsli: fileHendryAktif.name,
+            instruksiTambahan: instruksiFokus
+          })
+        });
+        const d = await res.json();
+
+        if (d.sukses) {
+          log(`[HENDRY]: ${d.pesan}`);
+          document.getElementById("hendryDropzoneResult").style.display = "block";
+          document.getElementById("hendryResultTitle").innerText = `Topik: ${d.judulMateri}`;
+          document.getElementById("hendryResultPoints").innerText = d.ringkasanTeks;
+          document.getElementById("btnDownloadHendryResult").href = d.downloadUrl;
+          document.getElementById("btnDownloadHendryResult").setAttribute("download", d.fileHasil);
+
+          await muatDaftarFile();
+          bacaDokumen(d.fileHasil);
+        } else {
+          log(`[HENDRY ERROR]: ${d.error}`);
+        }
+      } catch (err) {
+        log("Gagal merangkum: " + err.message);
+      } finally {
+        setTimeout(() => {
+          pod.classList.remove("active-worker");
+          avatar.classList.remove("typing");
+          statusBadge.innerText = "Standby (Siaga)";
+          statusBadge.style.color = "";
+        }, 800);
+      }
+    }
 
           if (d.sukses) {
             log(`[REXHA]: ${d.pesan}`);
@@ -1251,7 +1510,7 @@
 
       // SMART AUTO-DETECT ASISTEN (Pindah otomatis ke asisten yang tepat)
       const low = instruksi.toLowerCase();
-      if (low.includes("hendry") || low.includes("pindah") || low.includes("move") || (low.includes("folder") && !low.includes("cover"))) {
+      if (low.includes("hendry") || low.includes("rangkum") || low.includes("ringkas") || low.includes("materi") || low.includes("cheat sheet") || low.includes("catatan") || low.includes("kisi-kisi") || low.includes("ujian") || low.includes("modul") || low.includes("slide")) {
         asistenId = "hendry";
         document.getElementById("select-asisten").value = "hendry";
       } else if (low.includes("rexha") || low.includes("pdf") || low.includes("doc") || low.includes("word") || low.includes("cover")) {

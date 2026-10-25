@@ -199,91 +199,192 @@ function aksiRexha(instruksi) {
   return { namaFile, pathFile, pesan, isi };
 }
 
-// 2. AKSI HENDRY (File Explorer, Folder, Foto & Video Manager)
+// 2. AKSI HENDRY (Study Notes & Summary Specialist 📚)
+function buatRangkumanMateriHendry(topik, instruksi, namaFileAsli = "") {
+  const sekarang = new Date();
+  const lower = (topik + " " + instruksi).toLowerCase();
+
+  let judulMateri = topik.toUpperCase();
+  let poinKonsep = [];
+  let kisiKisiUjian = [];
+
+  // Analisis Mata Kuliah berdasarkan konteks
+  if (lower.includes("cloud")) {
+    judulMateri = "CLOUD COMPUTING & ARSITEKTUR LAYANAN AWAN";
+    poinKonsep = [
+      "<b>Model Layanan:</b> IaaS (Infrastructure as a Service), PaaS (Platform as a Service), SaaS (Software as a Service).",
+      "<b>Deployment Model:</b> Public Cloud (AWS, GCP, Azure), Private Cloud (Internal Organisasi), Hybrid Cloud, Community Cloud.",
+      "<b>Karakteristik Esensial:</b> On-demand self-service, broad network access, resource pooling, rapid elasticity, measured service.",
+      "<b>Virtualisasi & Kontainer:</b> Perbedaan mendasar antara Virtual Machine (Hypervisor-based) vs Container (Docker/Kubernetes lightweight engine)."
+    ];
+    kisiKisiUjian = [
+      "Kapan organisasi harus memilih PaaS dibanding IaaS?",
+      "Jelaskan prinsip Shared Responsibility Model dalam keamanan Cloud!",
+      "Keuntungan arsitektur Microservices di atas container."
+    ];
+  } else if (lower.includes("pbo") || lower.includes("oop") || lower.includes("objek")) {
+    judulMateri = "PEMROGRAMAN BERORIENTASI OBJEK (PBO / OOP)";
+    poinKonsep = [
+      "<b>4 Pilar Utama OOP:</b> Encapsulation (pembungkusan data & method), Inheritance (pewarisan sifat class), Polymorphism (banyak bentuk: Overloading & Overriding), Abstraction (menyembunyikan detail implementasi).",
+      "<b>Class vs Object:</b> Class adalah cetak biru (blueprint), sedangkan Object adalah instansiasi nyata dari class.",
+      "<b>Constructor & Destructor:</b> Method khusus yang otomatis dieksekusi saat objek pertama kali dibuat ke dalam memori.",
+      "<b>Access Modifier:</b> public (akses bebas), private (hanya dalam class yang sama), protected (dalam class dan turunannya)."
+    ];
+    kisiKisiUjian = [
+      "Perbedaan mendasar antara Method Overloading dan Method Overriding!",
+      "Bagaimana Abstraction dan Interface diterapkan dalam skala proyek nyata?",
+      "Contoh penerapan pewarisan (inheritance) hierarkis."
+    ];
+  } else if (lower.includes("cyber") || lower.includes("keamanan")) {
+    judulMateri = "KEAMANAN SIBER (CYBER SECURITY & DEFENSE)";
+    poinKonsep = [
+      "<b>CIA Triad:</b> Confidentiality (Kerahasiaan data), Integrity (Keaslian/keutuhan data), Availability (Ketersediaan layanan).",
+      "<b>Vektor Serangan Populer:</b> Phishing, SQL Injection, Cross-Site Scripting (XSS), Man-in-the-Middle (MitM), DDoS, Ransomware.",
+      "<b>Kriptografi:</b> Kriptografi Simetris (AES - kunci sama) vs Kriptografi Asimetris (RSA/ECC - public & private key).",
+      "<b>Mekanisme Pertahanan:</b> Firewall, IDS/IPS (Intrusion Detection/Prevention), Multi-Factor Authentication (MFA), Zero Trust Architecture."
+    ];
+    kisiKisiUjian = [
+      "Jelaskan prinsip kerja serangan SQL Injection dan cara mitigasinya (Prepared Statements)!",
+      "Bagaimana protokol HTTPS memanfaatkan TLS/SSL handshake?",
+      "Konsep least privilege dalam manajemen hak akses user."
+    ];
+  } else if (lower.includes("iot")) {
+    judulMateri = "INTERNET OF THINGS (IOT) & SISTEM TERTANAM";
+    poinKonsep = [
+      "<b>Arsitektur 3 Lapis IoT:</b> Perception Layer (Sensors/Actuators) ➔ Network Layer (WiFi, BLE, LoRaWAN, 5G) ➔ Application Layer (Dashboard, Cloud Analytics).",
+      "<b>Protokol Komunikasi Ringan:</b> MQTT (Publish-Subscribe arsitektur via Broker), CoAP (Constrained Application Protocol), HTTP/REST.",
+      "<b>Hardware Populer:</b> Mikrokontroler ESP32/ESP8266 (built-in WiFi), Arduino, Raspberry Pi (Single Board Computer).",
+      "<b>Tantangan IoT:</b> Konsumsi daya rendah (low power), skalabilitas koneksi jutaan node, dan enkripsi data sensor di edge."
+    ];
+    kisiKisiUjian = [
+      "Mengapa protokol MQTT jauh lebih hemat daya dibanding HTTP pada perangkat sensor IoT?",
+      "Peran Broker dalam arsitektur Publish-Subscribe MQTT.",
+      "Tantangan keamanan pada perangkat keras IoT berspesifikasi minim."
+    ];
+  } else if (lower.includes("mobile")) {
+    judulMateri = "MOBILE COMPUTING & PENGEMBANGAN APLIKASI";
+    poinKonsep = [
+      "<b>Arsitektur Pengembangan:</b> Native (Kotlin/Swift), Cross-Platform (Flutter/Dart, React Native), Progressive Web Apps (PWA).",
+      "<b>Siklus Hidup Aplikasi (Lifecycle):</b> onCreate ➔ onStart ➔ onResume ➔ onPause ➔ onStop ➔ onDestroy.",
+      "<b>State Management & Storage:</b> SQLite/Room database lokal, Shared Preferences, REST API Integration (Retrofit/Axios).",
+      "<b>Optimalisasi Kinerja:</b> Manajemen memori, background worker, dan caching data untuk mode offline."
+    ];
+    kisiKisiUjian = [
+      "Jelaskan perbedaan saat Activity berada dalam kondisi onPause vs onStop!",
+      "Keuntungan dan trade-off memilih framework Flutter dibanding Native Android.",
+      "Bagaimana mengamankan API key di dalam aplikasi mobile client?"
+    ];
+  } else if (lower.includes("wirausaha") || lower.includes("bisnis")) {
+    judulMateri = "KEWIRAUSAHAAN & STRATEGI BISNIS DIGITAL";
+    poinKonsep = [
+      "<b>Business Model Canvas (BMC):</b> 9 blok bangunan (Customer Segments, Value Propositions, Channels, Customer Relationships, Revenue Streams, Key Resources, Key Activities, Key Partnerships, Cost Structure).",
+      "<b>Validasi Pasar:</b> MVP (Minimum Viable Product), Customer Feedback Loop (Build-Measure-Learn), Product-Market Fit.",
+      "<b>Analisis Kompetitif:</b> SWOT (Strengths, Weaknesses, Opportunities, Threats) dan Blue Ocean Strategy.",
+      "<b>Unit Economics:</b> CAC (Customer Acquisition Cost) vs LTV (Customer Lifetime Value)."
+    ];
+    kisiKisiUjian = [
+      "Mengapa Value Proposition harus selaras dengan Customer Pain Points?",
+      "Jelaskan strategi mencapai rasio LTV:CAC yang sehat (minimal 3:1)!",
+      "Contoh penerapan pivot strategi saat produk awal belum mencapai Product-Market Fit."
+    ];
+  } else {
+    // Materi Kuliah Umum
+    judulMateri = `RANGKUMAN STUDI: ${topik.toUpperCase()}`;
+    poinKonsep = [
+      `<b>Intisari Utama:</b> Pembahasan komprehensif terkait topik ${topik} dengan fokus pada prinsip dasar, metodologi, dan penerapannya di dunia nyata.`,
+      "<b>Struktur Landasan:</b> Memahami keterkaitan antara teori formal dengan implementasi praktis di lapangan.",
+      "<b>Faktor Penentu:</b> Analisis terhadap variabel-variabel kunci yang mempengaruhi keberhasilan topik ini.",
+      "<b>Evaluasi Kritis:</b> Menemukan kelebihan dan batasan dari konsep yang diajarkan."
+    ];
+    kisiKisiUjian = [
+      `Jelaskan definisi fundamental dan ruang lingkup dari ${topik}!`,
+      "Sebutkan 3 studi kasus nyata di mana konsep ini diterapkan!",
+      "Bagaimana menganalisis kelemahan dari metode ini saat menghadapi situasi kompleks?"
+    ];
+  }
+
+  // File HTML Rangkuman Minimalist Aesthetic
+  const isiHtml = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Study Notes - ${judulMateri}</title>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', Arial, sans-serif; line-height: 1.6; color: #2c2724; background: #fbf9f5; padding: 40px; max-width: 820px; margin: auto; }
+    .card { background: white; border: 1px solid #e8e1d5; border-radius: 14px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 24px; }
+    .header-box { border-bottom: 2px solid #8d5b36; padding-bottom: 14px; margin-bottom: 20px; }
+    h1 { font-size: 18pt; color: #2c2724; margin: 0 0 8px 0; text-transform: uppercase; }
+    .meta { font-size: 10pt; color: #786f66; line-height: 1.5; }
+    h2 { font-size: 13pt; color: #8d5b36; border-left: 4px solid #8d5b36; padding-left: 10px; margin: 20px 0 10px 0; }
+    ul, ol { padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 8px; font-size: 11pt; }
+    .flashcard { background: #faf6f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; border-left: 3px solid #627d98; font-size: 10.5pt; }
+    .footer-badge { text-align: center; font-size: 9.5pt; color: #999; margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header-box">
+      <h1>📚 STUDY NOTES & CHEAT SHEET UJIAN</h1>
+      <div class="meta">
+        <strong>Disusun oleh:</strong> Hendry (Study Notes & Summary Specialist)<br>
+        <strong>Materi / Topik:</strong> ${judulMateri}<br>
+        ${namaFileAsli ? `<strong>Berkas Rujukan:</strong> ${namaFileAsli}<br>` : ""}
+        <strong>Waktu Rangkum:</strong> ${sekarang.toLocaleString("id-ID")}
+      </div>
+    </div>
+
+    <h2>1. 📌 Intisari Konsep & Poin-Poin Kunci</h2>
+    <ul>
+      ${poinKonsep.map(p => `<li>${p}</li>`).join("\n      ")}
+    </ul>
+
+    <h2>2. 🎯 Kisi-Kisi Tanya Jawab Persiapan Ujian (Exam Takeaways)</h2>
+    ${kisiKisiUjian.map((k, idx) => `
+      <div class="flashcard">
+        <b>Q${idx + 1}:</b> ${k}
+      </div>
+    `).join("")}
+
+    <h2>3. 💡 Tips Mengingat dari Hendry</h2>
+    <p>Pelajari <b>Poin Kunci</b> di atas 15 menit sebelum kelas atau ujian. Fokuskan pada pemahaman istilah teknis dan perbedaannya, bukan sekadar menghafal kata per kata.</p>
+  </div>
+  <div class="footer-badge">
+    Disusun khusus untuk Ma'am • Academic Virtual Office
+  </div>
+</body>
+</html>`;
+
+  return { judulMateri, poinKonsep, kisiKisiUjian, isiHtml };
+}
+
 function aksiHendry(instruksi) {
-  const lower = instruksi.toLowerCase();
-  let pesan = "";
-  let folderTarget = "";
+  const sekarang = new Date();
+  const timestamp = sekarang.toISOString().replace(/[:.]/g, "-");
+  
+  // Ekstrak topik materi dari kalimat Ma'am secara cerdas
+  let topik = instruksi
+    .replace(/\b(?:hendry|tolong|coba|buatkan|rangkumkan|rangkum|ringkas|materi|tentang|soal|cheat sheet|ujian|dong|ya|dan|buat|kisi[- ]kisi(?:nya)?|file|berkas|ini)\b/gi, "")
+    .replace(/[^\w\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-  // Bersihkan tanda baca dan kata sambung di akhir kalimat
-  let cleanText = instruksi.replace(/[.,!?]+$/, '').trim();
-  cleanText = cleanText.replace(/\s+(?:ya|dong|deh|nih|tolong|sekarang)$/i, '').trim();
-
-  // A. Pindahkan Berkas / Folder (DINAMIS UNTUK SEGALA FOLDER & FILE)
-  if (lower.includes("pindah") || lower.includes("move") || lower.includes("geser") || lower.includes("masukkan")) {
-    const matchPindah = cleanText.match(/(?:pindah(?:kan)?|move|geser|masukkan)\s+(.+?)\s+ke\s+(.+)$/i);
-
-    if (matchPindah) {
-      let asal = matchPindah[1].trim();
-      let tujuan = matchPindah[2].trim();
-
-      // Deteksi apakah yang dipindahkan adalah File atau Folder
-      const isFile = /\.[a-z0-9]{2,5}$/i.test(asal) || lower.includes("file ") || lower.includes("berkas ") || lower.includes("foto ") || lower.includes("video ");
-
-      // Bersihkan kata 'folder' atau 'file' atau tanda kutip
-      asal = asal.replace(/^(?:folder\s+|file\s+|berkas\s+|foto\s+|video\s+)/i, "").replace(/['"]/g, "").trim();
-      tujuan = tujuan.replace(/^(?:folder\s+|direktori\s+)/i, "").replace(/['"]/g, "").trim();
-
-      // Buat folder tujuan (bebas folder apa saja: SEMS 1-8, Arsip, Tugas, dll)
-      const pathTujuan = path.join(WORKSPACE_DIR, tujuan);
-      if (!fs.existsSync(pathTujuan)) {
-        fs.mkdirSync(pathTujuan, { recursive: true });
-      }
-
-      // Cari lokasi fisik berkas/folder asal (bisa di WORKSPACE_DIR atau di DOKUMEN_DIR)
-      let pathAsal = path.join(WORKSPACE_DIR, asal);
-      if (!fs.existsSync(pathAsal) && fs.existsSync(path.join(DOKUMEN_DIR, asal))) {
-        pathAsal = path.join(DOKUMEN_DIR, asal);
-      }
-
-      const targetAkhir = path.join(pathTujuan, asal);
-      let statusAksi = "";
-
-      if (fs.existsSync(pathAsal)) {
-        try {
-          fs.renameSync(pathAsal, targetAkhir);
-          statusAksi = `${isFile ? "Berkas file" : "Folder fisik"} "${asal}" telah berhasil dipindahkan ke dalam "${tujuan}".`;
-        } catch (e) {
-          fs.cpSync(pathAsal, targetAkhir, { recursive: true });
-          fs.rmSync(pathAsal, { recursive: true, force: true });
-          statusAksi = `${isFile ? "Berkas file" : "Folder fisik"} "${asal}" telah berhasil dipindahkan ke dalam "${tujuan}".`;
-        }
-      } else {
-        // Jika file/folder belum ada di disk, Hendry buatkan berkas/folder resminya
-        if (isFile) {
-          fs.writeFileSync(targetAkhir, `Dokumen ${asal} - Telah dirapikan oleh Hendry ke dalam folder ${tujuan}`, "utf-8");
-          statusAksi = `Berkas "${asal}" telah berhasil ditempatkan dan dirapikan di dalam folder "${tujuan}".`;
-        } else {
-          if (!fs.existsSync(targetAkhir)) {
-            fs.mkdirSync(targetAkhir, { recursive: true });
-          }
-          statusAksi = `Folder "${asal}" sekarang telah berhasil ditempatkan dan dirapikan di dalam folder "${tujuan}".`;
-        }
-      }
-
-      const ikonTipe = isFile ? "📄 Berkas File" : "📁 Folder";
-      pesan = `✅ Berhasil, Ma'am! Hendry telah memindahkan:\n\n• Jenis: ${ikonTipe}\n• Asal: "${asal}"\n• Folder Tujuan: 📁 "${tujuan}"\n• Lokasi Baru di Laptop: ${targetAkhir}\n\n${statusAksi} Struktur direktori File Explorer Ma'am kini sudah rapi! 👨‍💻`;
-      folderTarget = targetAkhir;
-      return { pesan, folderTarget, asal, tujuan, isFile };
-    }
+  if (!topik || topik.length < 2) {
+    topik = "Materi Perkuliahan Semester";
   }
 
-  // B. Buat Folder Baru
-  if (lower.includes("buat folder") || lower.includes("bikin folder") || lower.includes("folder baru")) {
-    const match = cleanText.match(/folder\s+(?:baru\s+)?["']?([^"'\n,]+)["']?/i);
-    const namaFolder = match && match[1] ? match[1].replace(/['"]/g, '').trim() : "Folder_Kuliah_Baru";
-    
-    folderTarget = path.join(WORKSPACE_DIR, namaFolder);
-    if (!fs.existsSync(folderTarget)) {
-      fs.mkdirSync(folderTarget, { recursive: true });
-    }
-    pesan = `Hendry telah membuat folder baru di File Explorer Ma'am:\n📁 "${namaFolder}"\nLokasi: ${folderTarget}\n\nFolder sudah siap digunakan untuk menampung file tugas, foto, atau rekaman video kuliah!`;
-    return { pesan, folderTarget };
-  }
+  const cleanSlug = topik.replace(/[^a-zA-Z0-9]/g, "_").replace(/_+/g, "_").replace(/^_|_$/g, "");
+  const { judulMateri, poinKonsep, isiHtml } = buatRangkumanMateriHendry(topik, instruksi);
+  const namaFile = `RANGKUMAN_${cleanSlug}_${timestamp}.html`;
+  const pathFile = path.join(DOKUMEN_DIR, namaFile);
 
-  // C. Standby
-  pesan = `Hendry siap memindahkan berkas atau folder Ma'am! Contoh kalimat:\n• "pindahkan folder Sistem Operasi ke folder SEMS 5"\n• "buatkan folder baru Catatan Kuliah"\nHendry akan langsung mengeksekusinya di File Explorer laptop Ma'am!`;
-  return { pesan, folderTarget };
+  fs.writeFileSync(pathFile, isiHtml, "utf-8");
+
+  const ringkasanSingkat = poinKonsep.slice(0, 3).map(p => `• ${p.replace(/<[^>]*>/g, "")}`).join("\n");
+
+  const pesan = `📚 Selesai, Ma'am! Hendry telah menyusun Catatan Belajar & Cheat Sheet untuk:\n"${judulMateri}"\n\n📌 Intisari Poin Kunci:\n${ringkasanSingkat}\n\nDokumen lengkap telah Hendry simpan di folder 'dokumen_tugas' sebagai "${namaFile}" dan siap Ma'am pelajari atau unduh! 👨‍💻`;
+
+  return { namaFile, pathFile, pesan, isi: isiHtml };
 }
 
 // 3. AKSI CANTIKA (Sekretaris Pribadi & Pengingat / Pengubah Jadwal Pintar)
@@ -551,6 +652,41 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // POST: Upload & Rangkum Materi Kuliah (Drag & Drop Hendry 📚)
+  if (req.url === "/api/upload-rangkum" && req.method === "POST") {
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", () => {
+      try {
+        const { namaFileAsli, instruksiTambahan } = JSON.parse(body);
+        const sekarang = new Date();
+        const baseName = path.parse(namaFileAsli).name;
+        
+        const { judulMateri, poinKonsep, kisiKisiUjian, isiHtml } = buatRangkumanMateriHendry(baseName, instruksiTambahan || "", namaFileAsli);
+        
+        const fileHasil = `RANGKUMAN_${baseName.replace(/[^a-zA-Z0-9]/g, "_")}.html`;
+        const pathHasil = path.join(DOKUMEN_DIR, fileHasil);
+        fs.writeFileSync(pathHasil, isiHtml, "utf-8");
+
+        const ringkasanTeks = poinKonsep.map(p => p.replace(/<[^>]*>/g, "")).join("\n• ");
+
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({
+          sukses: true,
+          fileHasil,
+          judulMateri,
+          ringkasanTeks: "• " + ringkasanTeks,
+          downloadUrl: `/api/download?nama=${encodeURIComponent(fileHasil)}`,
+          pesan: `Hendry berhasil merangkum berkas "${namaFileAsli}" menjadi Study Notes & Cheat Sheet Ujian!`
+        }));
+      } catch (err) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
   // GET: Baca Isi File Dokumen
   if (req.url.startsWith("/api/file-content") && req.method === "GET") {
     const urlParams = new URL(req.url, `http://localhost:${PORT}`);
@@ -588,7 +724,7 @@ const server = http.createServer((req, res) => {
         const lowText = (instruksi || "").toLowerCase();
         let targetId = karyawanId;
 
-        if (lowText.includes("hendry") || lowText.includes("pindah") || lowText.includes("move") || (lowText.includes("folder") && !lowText.includes("cover"))) {
+        if (lowText.includes("hendry") || lowText.includes("rangkum") || lowText.includes("ringkas") || lowText.includes("materi") || lowText.includes("cheat sheet") || lowText.includes("catatan")) {
           targetId = "hendry";
         } else if (lowText.includes("rexha") || lowText.includes("pdf") || lowText.includes("doc") || lowText.includes("word") || lowText.includes("cover")) {
           targetId = "rexha";

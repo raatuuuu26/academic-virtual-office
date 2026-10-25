@@ -31,15 +31,15 @@ Rexha bertugas mengurus berkas dokumen, format margin 4-3-3-3 standar kampus, da
 
 ---
 
-## 3. 👨‍💻 HENDRY (File Explorer & Storage Organizer)
+## 3. 👨‍💻 HENDRY (Study Notes & Summary Specialist)
 
-Hendry bertugas memindahkan folder, file dokumen, foto materi catatan, dan rekaman video kuliah di File Explorer laptop Ma'am sesuai arahan.
+Hendry bertugas merangkum berkas materi kuliah (modul, slide PPT, dokumen PDF/Word) menjadi poin-poin penting, intisari konsep, dan cheat sheet / kisi-kisi tanya jawab untuk persiapan ujian Ma'am.
 
 | Apa yang Ingin Dilakukan | Contoh Perintah Bebas yang Bisa Diketik |
 | :--- | :--- |
-| **Buat Folder Baru di Laptop** | • *"Hendry, buatkan folder baru Catatan dan Materi Kuliah"*<br>• *"Bikin folder Tugas Kelompok Cloud Computing"*<br>• *"Buat folder Arsip Semester 2026"* |
-| **Pindahkan File / Folder** | • *"Hendry, pindahkan file tugas ini ke folder Arsip"*<br>• *"Tolong pindahkan folder materi kuliah"* |
-| **Rapikan Foto Catatan & Video** | • *"Hendry, tolong rapikan foto materi kuliah dan rekaman video Zoom"*<br>• *"Kelompokkan berkas tugas agar rapi"* |
+| **Drop File Materi & Rangkum** | • Drag & drop berkas materi ke Workstation Hendry di web, lalu klik **"Rangkum & Susun Study Notes"**.<br>• Atau drop file, lalu ketik: *"Hendry, tolong rangkum file modul ini ya"* |
+| **Rangkum Topik Kuliah Tertentu** | • *"Hendry, tolong rangkum materi Cloud Computing ini dan buat kisi-kisi ujiannya"*<br>• *"Ringkas konsep penting tentang Pemrograman Berorientasi Objek"*<br>• *"Hendry, buatkan intisari materi Cyber Security"* |
+| **Susun Cheat Sheet & Kisi-Kisi Ujian** | • *"Hendry, buatkan cheat sheet dan kisi-kisi tanya jawab untuk ujian PBO"*<br>• *"Susun poin-poin hafalan penting sebelum kuis besok"* |
 
 ---
 
@@ -47,7 +47,7 @@ Hendry bertugas memindahkan folder, file dokumen, foto materi catatan, dan rekam
 Cukup pastikan di kalimat Ma'am ada salah satu kata kunci ini:
 * Untuk **Cantika**: `jadwal`, `kuliah`, `ubah jam [nama matkul]`, `tugas`, `reset`.
 * Untuk **Rexha**: `pdf`, `doc`, `word`, `konversi`, `ekstrak`, `cover`, `template`.
-* Untuk **Hendry**: `folder`, `file`, `foto`, `video`, `pindah`, `rapikan`.
+* Untuk **Hendry**: `rangkum`, `ringkas`, `materi`, `cheat sheet`, `catatan`, `kisi-kisi`, `ujian`, `modul`, `slide`.
 
 ---
 *Dokumen ini tersimpan di: `C:\Users\maula\.gemini\antigravity\scratch\simple-ai-agent\PANDUAN_PERINTAH_ASISTEN.md`*
