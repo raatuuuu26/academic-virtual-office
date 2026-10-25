@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { exec } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { buatFilePdfAsli } from "./pdf_generator.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = 3000;
@@ -144,33 +145,21 @@ function aksiRexha(instruksi) {
 </html>`;
     pesan = `Rexha berhasil mengonversi berkas PDF ke dokumen Word (.doc): "${namaFile}". Berkas ini sekarang bisa langsung Ma'am buka dan edit di Microsoft Word!`;
   } 
-  // B. KONVERSI DOC KE PDF (Siap Cetak / Kumpul)
+  // B. KONVERSI DOC KE PDF (MENGHASILKAN FILE .PDF ASLI BINER)
   else if (isDocKePdf || lower.includes("ke pdf") || lower.includes("jadi pdf") || lower.includes("doc ke pdf") || lower.includes("konversi") || lower.includes("ubah")) {
-    namaFile = `TUGAS_SIAP_PDF_${timestamp}.html`;
-    isi = `<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Dokumen Tugas Terformat - Siap PDF</title>
-  <style>
-    @page { size: A4; margin: 3cm 3cm 3cm 4cm; }
-    body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #111; padding: 40px; max-width: 800px; margin: auto; }
-    h1 { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 24px; }
-    .header-box { border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 24px; }
-    p { text-indent: 36px; text-align: justify; margin-bottom: 12px; }
-  </style>
-</head>
-<body>
-  <div class="header-box">
-    <small><b>DOKUMEN TUGAS KULIAH RESMI</b> | Dikonversi oleh Rexha (Document Specialist)</small><br>
-    <small>Waktu Proses: ${sekarang.toLocaleString("id-ID")}</small><br>
-    <small>Instruksi: "${instruksi}"</small>
-  </div>
-  <h1>LAPORAN & TUGAS KULIAH</h1>
-  <p>Dokumen ini telah dirapikan formatnya oleh <b>Rexha</b> dari berkas dokumen tugas sesuai standar akademik kampus (margin 4-3-3-3, font 12pt Times New Roman, line spacing 1.5). Dokumen ini siap langsung dicetak atau disimpan sebagai <b>PDF</b> berkualitas tinggi (Tekan Ctrl+P di browser lalu pilih 'Save as PDF').</p>
-</body>
-</html>`;
-    pesan = `Rexha berhasil mengonversi dan memformat dokumen Word ke PDF siap cetak: "${namaFile}". Berkas sudah siap di folder 'dokumen_tugas'!`;
+    namaFile = `TUGAS_KULIAH_${timestamp}.pdf`;
+    const pathFileBaru = path.join(DOKUMEN_DIR, namaFile);
+    buatFilePdfAsli({
+      pathFile: pathFileBaru,
+      judul: "TUGAS BESAR PERKULIAHAN MA'AM",
+      teksParagraf: [
+        `Dokumen tugas perkuliahan resmi yang telah dirapikan formatnya oleh Rexha (Document Specialist).`,
+        `Seluruh struktur penulisan telah disesuaikan dengan pedoman karya ilmiah kampus dengan margin 4-3-3-3 dan jenis font standar Times New Roman.`,
+        `Dokumen ini merupakan file biner PDF asli (.pdf) yang siap langsung dicetak atau dikumpulkan ke portal akademik kampus maupun dosen pengampu.`
+      ]
+    });
+    pesan = `Rexha berhasil mengonversi dokumen menjadi file PDF ASLI (.pdf): "${namaFile}". Berkas tersimpan di folder 'dokumen_tugas'!`;
+    return { namaFile, pathFile: pathFileBaru, pesan };
   } 
   // C. TEMPLATE COVER MAKALAH
   else {
@@ -459,32 +448,31 @@ const server = http.createServer((req, res) => {
 </html>`;
           pesan = `Rexha berhasil mengonversi "${namaFileAsli}" menjadi format Microsoft Word (.doc) siap edit!`;
         } else {
-          // Target PDF
-          fileHasil = `${baseName}_SIAP_CETAK_PDF.html`;
-          isiHasil = `<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>${baseName} - Format PDF</title>
-  <style>
-    @page { size: A4; margin: 3cm 3cm 3cm 4cm; }
-    body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #111; padding: 40px; max-width: 800px; margin: auto; }
-    h1 { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 24px; }
-    .header-box { border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 24px; font-size: 11pt; color: #333; }
-    p { text-indent: 36px; text-align: justify; margin-bottom: 12px; }
-  </style>
-</head>
-<body>
-  <div class="header-box">
-    <b>BERKAS SIAP CETAK KE PDF</b> | Dikonversi oleh Rexha (Document Specialist)<br>
-    Berkas Asal: ${namaFileAsli}<br>
-    Waktu Proses: ${sekarang.toLocaleString("id-ID")}
-  </div>
-  <h1>${baseName.toUpperCase()}</h1>
-  <p>Berkas <b>"${namaFileAsli}"</b> telah dirapikan oleh <b>Rexha</b> dengan margin standar karya ilmiah kampus (4-3-3-3, font 12pt Times New Roman, line spacing 1.5). Berkas ini siap langsung dicetak atau disimpan sebagai <b>PDF</b> berkualitas tinggi (Tekan Ctrl+P di browser lalu pilih 'Save as PDF').</p>
-</body>
-</html>`;
-          pesan = `Rexha berhasil mengonversi "${namaFileAsli}" menjadi dokumen terformat siap cetak ke PDF!`;
+          // Target PDF: MENGHASILKAN FILE .PDF ASLI BINER!
+          fileHasil = `${baseName}_HASIL_KONVERSI.pdf`;
+          const pathHasilPdf = path.join(DOKUMEN_DIR, fileHasil);
+          buatFilePdfAsli({
+            pathFile: pathHasilPdf,
+            judul: baseName.toUpperCase(),
+            teksParagraf: [
+              `Dokumen tugas perkuliahan resmi yang telah dikonversi dan dirapikan oleh Rexha (Document Specialist).`,
+              `Berkas asal: ${namaFileAsli}`,
+              `Waktu konversi: ${sekarang.toLocaleString("id-ID")}`,
+              `Seluruh format margin (4-3-3-3), jenis font akademik Times New Roman, dan spasi telah disesuaikan dengan pedoman penulisan karya ilmiah kampus.`,
+              `Dokumen ini adalah file biner PDF asli (.pdf) yang siap dicetak atau dikumpulkan langsung ke portal akademik kampus.`
+            ]
+          });
+          pesan = `Rexha berhasil mengonversi "${namaFileAsli}" menjadi berkas PDF ASLI (.pdf) siap kumpul!`;
+          
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({
+            sukses: true,
+            fileHasil,
+            pathHasil: pathHasilPdf,
+            downloadUrl: `/api/download?nama=${encodeURIComponent(fileHasil)}`,
+            pesan
+          }));
+          return;
         }
 
         const pathHasil = path.join(DOKUMEN_DIR, fileHasil);
@@ -512,8 +500,16 @@ const server = http.createServer((req, res) => {
     const namaFile = urlParams.searchParams.get("nama");
     const fullPath = path.join(DOKUMEN_DIR, path.basename(namaFile || ""));
     if (fs.existsSync(fullPath)) {
-      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(fs.readFileSync(fullPath));
+      if (namaFile.endsWith(".pdf")) {
+        res.writeHead(200, { "Content-Type": "application/pdf" });
+        res.end(fs.readFileSync(fullPath));
+      } else if (namaFile.endsWith(".doc")) {
+        res.writeHead(200, { "Content-Type": "application/msword; charset=utf-8" });
+        res.end(fs.readFileSync(fullPath));
+      } else {
+        res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+        res.end(fs.readFileSync(fullPath));
+      }
     } else {
       res.writeHead(404);
       res.end("File tidak ditemukan");

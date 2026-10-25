@@ -1230,11 +1230,10 @@
 
     async function bacaDokumen(nama) {
       try {
-        const res = await fetch(`/api/file-content?nama=${encodeURIComponent(nama)}`);
-        const html = await res.text();
         const frame = document.getElementById("preview-area");
-        frame.innerHTML = `<iframe style="width:100%; height:180px; border:none; background:white; border-radius:6px;" srcdoc="${html.replace(/"/g, '&quot;')}"></iframe>`;
-        log(`Membuka berkas: "${nama}"`);
+        const fileUrl = `/api/file-content?nama=${encodeURIComponent(nama)}`;
+        frame.innerHTML = `<iframe style="width:100%; height:240px; border:none; background:white; border-radius:8px;" src="${fileUrl}"></iframe>`;
+        log(`Membuka pratinjau berkas: "${nama}"`);
       } catch (e) {
         log("Gagal membaca berkas.");
       }
