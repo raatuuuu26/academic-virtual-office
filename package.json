@@ -1,10 +1,12 @@
 {
-  "name": "simple-ai-agent",
+  "name": "academic-virtual-office",
   "version": "1.0.0",
-  "description": "Contoh program AI Agent sederhana untuk memahami cara kerja ReAct Loop dan Tools",
-  "main": "agent.js",
+  "description": "Personal Academic Virtual Office - Asisten Kuliah Minimalist Aesthetic",
+  "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node agent.js"
+    "start": "node server.js",
+    "lint": "node -c server.js pdf_generator.js",
+    "test": "node test/app.test.js"
   }
 }
