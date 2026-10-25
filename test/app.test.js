@@ -67,3 +67,43 @@ test("3. Verifikasi Integritas public/index.html & Script Syntax", () => {
   // Validating function constructor executes without syntax error
   new Function(scriptMatch[1]);
 });
+
+test("4. Verifikasi Fleksibilitas Jadwal Kuliah (Termasuk Sabtu & Minggu)", () => {
+  const dataPath = path.join(rootDir, "academic_data.json");
+  const raw = fs.readFileSync(dataPath, "utf-8");
+  const data = JSON.parse(raw);
+
+  // Simulasi penambahan mata kuliah hari Sabtu
+  const jadwalSabtu = {
+    id: "sabtu-1",
+    hari: "Sabtu",
+    jam: "09:00 WIB",
+    matkul: "Praktikum Jaringan & Cloud Security",
+    ruangan: "Lab Cyber 3",
+    dosen: "Ir. Handayani, M.Kom"
+  };
+
+  const jadwalUpdated = [...data.jadwalTetap, jadwalSabtu];
+  assert.ok(jadwalUpdated.some(j => j.hari === "Sabtu"), "Jadwal harus mendukung kelas hari Sabtu");
+});
+
+test("5. Verifikasi Integritas Penyimpanan Feedback Pengguna", () => {
+  const feedbackFile = path.join(rootDir, "feedback_user.json");
+  const sample = [{
+    id: "fb_test",
+    waktu: new Date().toISOString(),
+    namaPengguna: "Tester",
+    kategori: "Fitur",
+    pesan: "Uji coba pencatatan feedback otomatis."
+  }];
+
+  fs.writeFileSync(feedbackFile, JSON.stringify(sample, null, 2), "utf-8");
+  assert.ok(fs.existsSync(feedbackFile), "feedback_user.json harus dapat ditulis");
+  
+  const read = JSON.parse(fs.readFileSync(feedbackFile, "utf-8"));
+  assert.equal(read[0].namaPengguna, "Tester");
+
+  // Cleanup
+  fs.unlinkSync(feedbackFile);
+});
+

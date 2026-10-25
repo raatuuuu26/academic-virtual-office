@@ -540,6 +540,102 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // GET: Pengaturan Kantor & Konfigurasi Karyawan
+  if (req.url === "/api/settings" && req.method === "GET") {
+    const data = bacaDataAkademik();
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({
+      pengaturan: data.pengaturan || {},
+      karyawan: data.karyawan || [],
+      jadwalTetap: data.jadwalTetap || []
+    }));
+    return;
+  }
+
+  // POST: Simpan Pengaturan (Panggilan, Nama Asisten, Jadwal Kuliah s.d. Sabtu/Minggu)
+  if (req.url === "/api/settings" && req.method === "POST") {
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", () => {
+      try {
+        const { namaPanggilan, namaCantika, namaRexha, namaHendry, jadwalBaru } = JSON.parse(body);
+        const data = bacaDataAkademik();
+
+        if (namaPanggilan && namaPanggilan.trim()) {
+          const panggilanBaru = namaPanggilan.trim();
+          data.pengaturan.namaPanggilan = panggilanBaru;
+          data.pengaturan.greeting = `Ada tugas apa hari ini, ${panggilanBaru}?`;
+        }
+
+        if (data.karyawan) {
+          data.karyawan.forEach(k => {
+            if (k.id === "cantika" && namaCantika && namaCantika.trim()) k.nama = namaCantika.trim();
+            if (k.id === "rexha" && namaRexha && namaRexha.trim()) k.nama = namaRexha.trim();
+            if (k.id === "hendry" && namaHendry && namaHendry.trim()) k.nama = namaHendry.trim();
+          });
+        }
+
+        if (Array.isArray(jadwalBaru)) {
+          data.jadwalTetap = jadwalBaru;
+        }
+
+        simpanDataAkademik(data);
+
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({
+          sukses: true,
+          pesan: "Pengaturan kantor dan jadwal berhasil disimpan!",
+          pengaturan: data.pengaturan,
+          karyawan: data.karyawan,
+          jadwalTetap: data.jadwalTetap
+        }));
+      } catch (err) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
+  // POST: Simpan Kritik & Saran Pengguna
+  if (req.url === "/api/feedback" && req.method === "POST") {
+    let body = "";
+    req.on("data", c => body += c);
+    req.on("end", () => {
+      try {
+        const { nama, kategori, pesan } = JSON.parse(body);
+        if (!pesan || !pesan.trim()) {
+          throw new Error("Pesan kritik dan saran tidak boleh kosong.");
+        }
+        const data = bacaDataAkademik();
+        const FEEDBACK_FILE = path.join(__dirname, "feedback_user.json");
+        let listFeedback = [];
+        if (fs.existsSync(FEEDBACK_FILE)) {
+          try { listFeedback = JSON.parse(fs.readFileSync(FEEDBACK_FILE, "utf-8")); } catch(e) {}
+        }
+        const itemBaru = {
+          id: `fb_${Date.now()}`,
+          waktu: new Date().toISOString(),
+          namaPengguna: nama || (data.pengaturan && data.pengaturan.namaPanggilan) || "Pengguna",
+          kategori: kategori || "Saran & Masukan",
+          pesan: pesan.trim()
+        };
+        listFeedback.push(itemBaru);
+        fs.writeFileSync(FEEDBACK_FILE, JSON.stringify(listFeedback, null, 2), "utf-8");
+
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({
+          sukses: true,
+          pesan: "Terima kasih banyak! Kritik & saran Anda telah berhasil dicatat untuk pengembangan sistem ini."
+        }));
+      } catch (err) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
   // GET: List File Hasil Kerja
   if (req.url === "/api/files" && req.method === "GET") {
     const files = fs.existsSync(DOKUMEN_DIR) ? fs.readdirSync(DOKUMEN_DIR).map(f => {

@@ -802,6 +802,132 @@
   </div>
 
   <!-- ============================================================
+       MODAL PENGATURAN KANTOR (SETTINGS & CUSTOMIZATION)
+       ============================================================ -->
+  <div class="modal-backdrop" id="settingsModal" onclick="if(event.target === this) tutupModalSettings()">
+    <div class="center-notification-box" style="max-width: 680px;">
+      <div class="modal-header-bar">
+        <div class="reminder-sender">
+          <span class="sender-avatar">⚙️</span>
+          <div>
+            <div class="sender-title">Pengaturan Kantor Virtual & Kustomisasi</div>
+            <div class="sender-badge">Panggilan, Nama Karyawan, & Jadwal Kuliah Fleksibel</div>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="tutupModalSettings()" title="Tutup Pengaturan (X)">✕</button>
+      </div>
+      <div class="modal-body" style="text-align: left; max-height: 480px; overflow-y: auto; padding: 20px;">
+        
+        <!-- PRIVACY & FILE ACCESS NOTICE -->
+        <div style="background: #edf5f0; border-left: 3.5pt solid #2b6139; padding: 12px; border-radius: 8px; margin-bottom: 18px;">
+          <div style="font-weight: 700; color: #2b6139; font-size: 13px; margin-bottom: 4px;">
+            🛡️ Privasi & Izin Akses File Explorer Komputer Anda
+          </div>
+          <p style="font-size: 11.5px; color: #3b744a; line-height: 1.5; margin: 0;">
+            Aplikasi ini beroperasi <b>100% lokal di laptop Anda</b> (di dalam folder <code>kuliah_workspace</code>). Asisten <b>TIDAK</b> mengunggah file tugas atau jadwal Anda ke server luar/cloud publik. Seluruh berkas hanya dapat diakses oleh Anda di File Explorer lokal.
+          </p>
+        </div>
+
+        <!-- 1. NAMA PANGGILAN -->
+        <div style="margin-bottom: 18px;">
+          <label style="font-size: 12.5px; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 6px;">
+            👤 Nama Panggilan Anda (Callsign)
+          </label>
+          <input type="text" id="settingNamaPanggilan" placeholder="Contoh: Ma'am, Kak, Sis, Ratu, dsb..." style="width: 100%; box-sizing: border-box;">
+          <span style="font-size: 11px; color: var(--text-muted);">Sapaan asisten seperti "Ada tugas apa hari ini, [Panggilan]?" akan otomatis mengikuti nama ini.</span>
+        </div>
+
+        <!-- 2. NAMA KARYAWAN -->
+        <div style="margin-bottom: 18px;">
+          <label style="font-size: 12.5px; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 6px;">
+            👥 Nama Asisten Virtual Pribadi
+          </label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+            <div>
+              <span style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px;">Sekretaris:</span>
+              <input type="text" id="settingNamaCantika" placeholder="Cantika" style="width: 100%; box-sizing: border-box; font-size: 12.5px;">
+            </div>
+            <div>
+              <span style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px;">Converter Doc:</span>
+              <input type="text" id="settingNamaRexha" placeholder="Rexha" style="width: 100%; box-sizing: border-box; font-size: 12.5px;">
+            </div>
+            <div>
+              <span style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px;">Summarizer:</span>
+              <input type="text" id="settingNamaHendry" placeholder="Hendry" style="width: 100%; box-sizing: border-box; font-size: 12.5px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. KUSTOMISASI JADWAL KULIAH (TERMASUK SABTU/MINGGU) -->
+        <div style="margin-bottom: 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="font-size: 12.5px; font-weight: 700; color: var(--text-main);">
+              📅 Atur Jadwal Kuliah Mingguan (Bisa s.d. Hari Sabtu / Minggu)
+            </label>
+            <button class="tag-chip" type="button" onclick="tambahBarisJadwal()" style="background: #faf6f0; border-color: #8d5b36; color: #8d5b36; font-weight: 700;">
+              ➕ Tambah Mata Kuliah
+            </button>
+          </div>
+          <div id="containerEditorJadwal" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; padding-right: 4px;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+      <div style="padding: 14px 20px; background: #faf8f5; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+        <button class="btn-notification" onclick="tutupModalSettings()" style="background: white;">Batal</button>
+        <button class="btn-exec" onclick="simpanPengaturanKantor()" style="background: #2c2724; padding: 9px 20px;">
+          💾 Simpan Perubahan Pengaturan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL KRITIK & SARAN PENGGUNA (FEEDBACK)
+       ============================================================ -->
+  <div class="modal-backdrop" id="feedbackModal" onclick="if(event.target === this) tutupModalFeedback()">
+    <div class="center-notification-box" style="max-width: 540px;">
+      <div class="modal-header-bar">
+        <div class="reminder-sender">
+          <span class="sender-avatar">💬</span>
+          <div>
+            <div class="sender-title">Kritik, Saran & Masukan</div>
+            <div class="sender-badge">Bantu kami menyempurnakan Kantor Virtual Anda</div>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="tutupModalFeedback()" title="Tutup (X)">✕</button>
+      </div>
+      <div class="modal-body" style="text-align: left; padding: 20px;">
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 12px; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 5px;">
+            Kategori Masukan:
+          </label>
+          <select id="feedbackKategori" style="width: 100%; box-sizing: border-box;">
+            <option value="Saran Fitur Baru">💡 Saran Fitur Baru</option>
+            <option value="Tampilan & Desain">🎨 Tampilan & Desain (Aesthetic)</option>
+            <option value="Laporan Masalah">🐛 Laporan Masalah / Bug</option>
+            <option value="Lainnya">📝 Masukan Lainnya</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 12px; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 5px;">
+            Pesan / Masukan Anda:
+          </label>
+          <textarea id="feedbackPesan" rows="4" placeholder="Tuliskan kritik, masukan, atau permintaan fitur yang Anda inginkan..." style="width: 100%; box-sizing: border-box; padding: 10px; border-radius: 8px; border: 1px solid var(--border-subtle); font-family: inherit; font-size: 13px; outline: none;"></textarea>
+        </div>
+        <div id="feedbackStatusAlert" style="display:none; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;"></div>
+      </div>
+      <div style="padding: 12px 20px; background: #faf8f5; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn-notification" onclick="tutupModalFeedback()" style="background: white;">Batal</button>
+        <button class="btn-exec" onclick="kirimFeedback()" style="background: #8d5b36; padding: 9px 20px;">
+          📤 Kirim Masukan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
        POPUP NOTIFIKASI DI TENGAH LAYAR (MODAL CENTER SCREEN)
        ============================================================ -->
   <div class="modal-backdrop show" id="centerNotificationModal" onclick="if(event.target === this) tutupNotifikasiModal()">
@@ -872,6 +998,14 @@
         <!-- TOMBOL BUKU PANDUAN PERINTAH -->
         <button class="btn-notification" onclick="bukaModalPanduan()">
           <span>📖</span> Panduan Perintah
+        </button>
+        <!-- TOMBOL PENGATURAN KANTOR & JADWAL -->
+        <button class="btn-notification" onclick="bukaModalSettings()">
+          <span>⚙️</span> Pengaturan
+        </button>
+        <!-- TOMBOL KRITIK & SARAN -->
+        <button class="btn-notification" onclick="bukaModalFeedback()">
+          <span>💬</span> Kritik & Saran
         </button>
         <!-- TOMBOL BUKA NOTIFIKASI TENGAH LAYAR KAPAN SAJA -->
         <button class="btn-notification" onclick="bukaNotifikasiModal()">
@@ -1380,6 +1514,159 @@
       }
     }
 
+    // KONTROL MODAL PENGATURAN (SETTINGS)
+    let draftJadwal = [];
+
+    async function bukaModalSettings() {
+      try {
+        const res = await fetch("/api/settings");
+        const d = await res.json();
+        
+        document.getElementById("settingNamaPanggilan").value = d.pengaturan?.namaPanggilan || "Ma'am";
+        
+        const cantika = d.karyawan?.find(k => k.id === "cantika");
+        const rexha = d.karyawan?.find(k => k.id === "rexha");
+        const hendry = d.karyawan?.find(k => k.id === "hendry");
+        
+        document.getElementById("settingNamaCantika").value = cantika ? cantika.nama : "Cantika";
+        document.getElementById("settingNamaRexha").value = rexha ? rexha.nama : "Rexha";
+        document.getElementById("settingNamaHendry").value = hendry ? hendry.nama : "Hendry";
+        
+        draftJadwal = Array.isArray(d.jadwalTetap) ? JSON.parse(JSON.stringify(d.jadwalTetap)) : [];
+        renderEditorJadwal();
+        
+        document.getElementById("settingsModal").classList.add("show");
+      } catch (e) {
+        alert("Gagal memuat pengaturan: " + e.message);
+      }
+    }
+
+    function tutupModalSettings() {
+      document.getElementById("settingsModal").classList.remove("show");
+    }
+
+    function renderEditorJadwal() {
+      const container = document.getElementById("containerEditorJadwal");
+      if (!draftJadwal.length) {
+        container.innerHTML = '<div style="font-size: 11.5px; color: var(--text-muted); padding: 8px;">Belum ada jadwal tetap. Klik Tambah Mata Kuliah.</div>';
+        return;
+      }
+      container.innerHTML = draftJadwal.map((j, idx) => `
+        <div style="display: flex; gap: 6px; align-items: center; background: white; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border-subtle); flex-wrap: wrap;">
+          <select style="padding: 4px 8px; font-size: 11px;" onchange="updateDraftJadwalField(${idx}, 'hari', this.value)">
+            <option value="Senin" ${j.hari === 'Senin' ? 'selected' : ''}>Senin</option>
+            <option value="Selasa" ${j.hari === 'Selasa' ? 'selected' : ''}>Selasa</option>
+            <option value="Rabu" ${j.hari === 'Rabu' ? 'selected' : ''}>Rabu</option>
+            <option value="Kamis" ${j.hari === 'Kamis' ? 'selected' : ''}>Kamis</option>
+            <option value="Jumat" ${j.hari === 'Jumat' ? 'selected' : ''}>Jumat</option>
+            <option value="Sabtu" ${j.hari === 'Sabtu' ? 'selected' : ''}>Sabtu (Weekend)</option>
+            <option value="Minggu" ${j.hari === 'Minggu' ? 'selected' : ''}>Minggu</option>
+          </select>
+          <input type="text" value="${j.jam || ''}" placeholder="Jam (cth: 17:00 WIB)" style="padding: 4px 8px; font-size: 11.5px; width: 120px;" onchange="updateDraftJadwalField(${idx}, 'jam', this.value)">
+          <input type="text" value="${j.matkul || ''}" placeholder="Nama Mata Kuliah" style="padding: 4px 8px; font-size: 11.5px; flex: 1; min-width: 140px;" onchange="updateDraftJadwalField(${idx}, 'matkul', this.value)">
+          <input type="text" value="${j.ruangan || ''}" placeholder="Ruang / Zoom" style="padding: 4px 8px; font-size: 11.5px; width: 100px;" onchange="updateDraftJadwalField(${idx}, 'ruangan', this.value)">
+          <button type="button" class="btn-close-modal" style="width: 24px; height: 24px; font-size: 11px;" onclick="hapusBarisJadwal(${idx})" title="Hapus">✕</button>
+        </div>
+      `).join("");
+    }
+
+    function updateDraftJadwalField(idx, field, val) {
+      if (draftJadwal[idx]) draftJadwal[idx][field] = val;
+    }
+
+    function tambahBarisJadwal() {
+      draftJadwal.push({
+        id: `custom-${Date.now()}`,
+        hari: "Sabtu",
+        jam: "09:00 WIB",
+        matkul: "Mata Kuliah Baru",
+        ruangan: "Ruang Kuliah / Zoom",
+        dosen: "Dosen Pengampu"
+      });
+      renderEditorJadwal();
+    }
+
+    function hapusBarisJadwal(idx) {
+      draftJadwal.splice(idx, 1);
+      renderEditorJadwal();
+    }
+
+    async function simpanPengaturanKantor() {
+      const namaPanggilan = document.getElementById("settingNamaPanggilan").value.trim();
+      const namaCantika = document.getElementById("settingNamaCantika").value.trim();
+      const namaRexha = document.getElementById("settingNamaRexha").value.trim();
+      const namaHendry = document.getElementById("settingNamaHendry").value.trim();
+
+      try {
+        const res = await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            namaPanggilan,
+            namaCantika,
+            namaRexha,
+            namaHendry,
+            jadwalBaru: draftJadwal
+          })
+        });
+        const d = await res.json();
+        if (d.sukses) {
+          tutupModalSettings();
+          log(`[PENGATURAN TERSIMPAN] ${d.pesan}`);
+          await muatDataKantor();
+          alert("Pengaturan kantor berhasil disimpan!");
+        }
+      } catch (err) {
+        alert("Gagal menyimpan: " + err.message);
+      }
+    }
+
+    // KONTROL MODAL KRITIK & SARAN (FEEDBACK)
+    function bukaModalFeedback() {
+      document.getElementById("feedbackPesan").value = "";
+      document.getElementById("feedbackStatusAlert").style.display = "none";
+      document.getElementById("feedbackModal").classList.add("show");
+    }
+
+    function tutupModalFeedback() {
+      document.getElementById("feedbackModal").classList.remove("show");
+    }
+
+    async function kirimFeedback() {
+      const kategori = document.getElementById("feedbackKategori").value;
+      const pesan = document.getElementById("feedbackPesan").value.trim();
+      const alertBox = document.getElementById("feedbackStatusAlert");
+
+      if (!pesan) {
+        alert("Silakan tulis pesan masukan Anda terlebih dahulu.");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ kategori, pesan })
+        });
+        const d = await res.json();
+        if (d.sukses) {
+          alertBox.style.display = "block";
+          alertBox.style.background = "#edf5f0";
+          alertBox.style.color = "#2b6139";
+          alertBox.innerText = `✨ ${d.pesan}`;
+          log(`[KRITIK & SARAN TERCATAT]: Kategori "${kategori}" - "${pesan.slice(0, 30)}..."`);
+          setTimeout(() => {
+            tutupModalFeedback();
+          }, 1500);
+        }
+      } catch (err) {
+        alertBox.style.display = "block";
+        alertBox.style.background = "#fef2f2";
+        alertBox.style.color = "#991b1b";
+        alertBox.innerText = `Gagal mengirim: ${err.message}`;
+      }
+    }
+
     // KONTROL MODAL PANDUAN PERINTAH
     function bukaModalPanduan() {
       document.getElementById("panduanModal").classList.add("show");
@@ -1420,6 +1707,24 @@
       try {
         const res = await fetch("/api/data");
         const data = await res.json();
+
+        // Update Nama Panggilan & Sapaan Dinamis
+        if (data.pengaturan && data.pengaturan.namaPanggilan) {
+          const p = data.pengaturan.namaPanggilan;
+          const greetingText = `"Ada tugas apa hari ini, ${p}?"`;
+          document.querySelectorAll(".greeting-title, .modal-greeting").forEach(el => el.innerText = greetingText);
+        }
+
+        // Update Nama Karyawan Dinamis jika diubah
+        if (data.karyawan) {
+          data.karyawan.forEach(k => {
+            const pod = document.getElementById(`pod-${k.id}`);
+            if (pod) {
+              const nameEl = pod.querySelector(".worker-name");
+              if (nameEl) nameEl.innerText = k.nama;
+            }
+          });
+        }
 
         // Render Jadwal Kuliah
         const container = document.getElementById("schedule-container");
