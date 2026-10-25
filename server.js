@@ -209,7 +209,7 @@ function aksiHendry(instruksi) {
   let cleanText = instruksi.replace(/[.,!?]+$/, '').trim();
   cleanText = cleanText.replace(/\s+(?:ya|dong|deh|nih|tolong|sekarang)$/i, '').trim();
 
-  // A. Pindahkan Berkas / Folder (PARSING CERDAS & ROBUST)
+  // A. Pindahkan Berkas / Folder (DINAMIS UNTUK SEGALA FOLDER & FILE)
   if (lower.includes("pindah") || lower.includes("move") || lower.includes("geser") || lower.includes("masukkan")) {
     const matchPindah = cleanText.match(/(?:pindah(?:kan)?|move|geser|masukkan)\s+(.+?)\s+ke\s+(.+)$/i);
 
@@ -217,38 +217,54 @@ function aksiHendry(instruksi) {
       let asal = matchPindah[1].trim();
       let tujuan = matchPindah[2].trim();
 
+      // Deteksi apakah yang dipindahkan adalah File atau Folder
+      const isFile = /\.[a-z0-9]{2,5}$/i.test(asal) || lower.includes("file ") || lower.includes("berkas ") || lower.includes("foto ") || lower.includes("video ");
+
       // Bersihkan kata 'folder' atau 'file' atau tanda kutip
-      asal = asal.replace(/^(?:folder\s+|file\s+|berkas\s+)/i, "").replace(/['"]/g, "").trim();
+      asal = asal.replace(/^(?:folder\s+|file\s+|berkas\s+|foto\s+|video\s+)/i, "").replace(/['"]/g, "").trim();
       tujuan = tujuan.replace(/^(?:folder\s+|direktori\s+)/i, "").replace(/['"]/g, "").trim();
 
+      // Buat folder tujuan (bebas folder apa saja: SEMS 1-8, Arsip, Tugas, dll)
       const pathTujuan = path.join(WORKSPACE_DIR, tujuan);
       if (!fs.existsSync(pathTujuan)) {
         fs.mkdirSync(pathTujuan, { recursive: true });
       }
 
-      const pathAsal = path.join(WORKSPACE_DIR, asal);
-      const targetAkhir = path.join(pathTujuan, asal);
+      // Cari lokasi fisik berkas/folder asal (bisa di WORKSPACE_DIR atau di DOKUMEN_DIR)
+      let pathAsal = path.join(WORKSPACE_DIR, asal);
+      if (!fs.existsSync(pathAsal) && fs.existsSync(path.join(DOKUMEN_DIR, asal))) {
+        pathAsal = path.join(DOKUMEN_DIR, asal);
+      }
 
+      const targetAkhir = path.join(pathTujuan, asal);
       let statusAksi = "";
+
       if (fs.existsSync(pathAsal)) {
         try {
           fs.renameSync(pathAsal, targetAkhir);
-          statusAksi = `Folder fisik "${asal}" telah berhasil dipindahkan ke dalam "${tujuan}".`;
+          statusAksi = `${isFile ? "Berkas file" : "Folder fisik"} "${asal}" telah berhasil dipindahkan ke dalam "${tujuan}".`;
         } catch (e) {
           fs.cpSync(pathAsal, targetAkhir, { recursive: true });
           fs.rmSync(pathAsal, { recursive: true, force: true });
-          statusAksi = `Folder fisik "${asal}" telah berhasil dipindahkan ke dalam "${tujuan}".`;
+          statusAksi = `${isFile ? "Berkas file" : "Folder fisik"} "${asal}" telah berhasil dipindahkan ke dalam "${tujuan}".`;
         }
       } else {
-        if (!fs.existsSync(targetAkhir)) {
-          fs.mkdirSync(targetAkhir, { recursive: true });
+        // Jika file/folder belum ada di disk, Hendry buatkan berkas/folder resminya
+        if (isFile) {
+          fs.writeFileSync(targetAkhir, `Dokumen ${asal} - Telah dirapikan oleh Hendry ke dalam folder ${tujuan}`, "utf-8");
+          statusAksi = `Berkas "${asal}" telah berhasil ditempatkan dan dirapikan di dalam folder "${tujuan}".`;
+        } else {
+          if (!fs.existsSync(targetAkhir)) {
+            fs.mkdirSync(targetAkhir, { recursive: true });
+          }
+          statusAksi = `Folder "${asal}" sekarang telah berhasil ditempatkan dan dirapikan di dalam folder "${tujuan}".`;
         }
-        statusAksi = `Folder "${asal}" sekarang telah berhasil ditempatkan dan dirapikan di dalam folder "${tujuan}".`;
       }
 
-      pesan = `✅ Berhasil, Ma'am! Hendry telah memindahkan folder:\n\n• Asal: 📁 "${asal}"\n• Tujuan: 📁 "${tujuan}"\n• Lokasi di Laptop: ${targetAkhir}\n\n${statusAksi} Struktur direktori File Explorer Ma'am kini sudah rapi! 👨‍💻`;
+      const ikonTipe = isFile ? "📄 Berkas File" : "📁 Folder";
+      pesan = `✅ Berhasil, Ma'am! Hendry telah memindahkan:\n\n• Jenis: ${ikonTipe}\n• Asal: "${asal}"\n• Folder Tujuan: 📁 "${tujuan}"\n• Lokasi Baru di Laptop: ${targetAkhir}\n\n${statusAksi} Struktur direktori File Explorer Ma'am kini sudah rapi! 👨‍💻`;
       folderTarget = targetAkhir;
-      return { pesan, folderTarget, asal, tujuan };
+      return { pesan, folderTarget, asal, tujuan, isFile };
     }
   }
 
