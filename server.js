@@ -4,6 +4,7 @@ import path from "node:path";
 import { exec } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { buatFilePdfAsli } from "./pdf_generator.js";
+import { ekstrakTeksDariDokumen } from "./doc_parser.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = 3000;
@@ -11,6 +12,16 @@ const DATA_FILE = path.join(__dirname, "academic_data.json");
 const WORKSPACE_DIR = path.join(__dirname, "kuliah_workspace");
 const DOKUMEN_DIR = path.join(WORKSPACE_DIR, "dokumen_tugas");
 const GDRIVE_DIR = path.join(WORKSPACE_DIR, "gdrive_sync");
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 // Pastikan folder kerja siap
 [WORKSPACE_DIR, DOKUMEN_DIR, GDRIVE_DIR].forEach(dir => {
@@ -145,20 +156,55 @@ function aksiRexha(instruksi) {
 </html>`;
     pesan = `Rexha berhasil mengonversi berkas PDF ke dokumen Word (.doc): "${namaFile}". Berkas ini sekarang bisa langsung Ma'am buka dan edit di Microsoft Word!`;
   } 
-  // B. KONVERSI DOC KE PDF (MENGHASILKAN FILE .PDF ASLI BINER)
+  // B. KONVERSI DOC KE PDF (MENGHASILKAN FILE .PDF ASLI BINER BERISI KONTEN ASLI)
   else if (isDocKePdf || lower.includes("ke pdf") || lower.includes("jadi pdf") || lower.includes("doc ke pdf") || lower.includes("konversi") || lower.includes("ubah")) {
-    namaFile = `TUGAS_KULIAH_${timestamp}.pdf`;
+    let judulPdf = "TUGAS BESAR PERKULIAHAN";
+    let paragrafPdf = [];
+    const listBerkas = fs.existsSync(DOKUMEN_DIR) ? fs.readdirSync(DOKUMEN_DIR) : [];
+    let fileDitemukan = null;
+
+    for (const fb of listBerkas) {
+      const fbLow = fb.toLowerCase();
+      const fbBase = path.parse(fb).name.toLowerCase();
+      if ((lower.includes(fbLow) || lower.includes(fbBase)) && !fb.endsWith(".pdf")) {
+        fileDitemukan = fb;
+        break;
+      }
+    }
+
+    if (!fileDitemukan) {
+      // Ambil berkas non-PDF terbaru jika ada
+      const nonPdf = listBerkas.filter(f => !f.endsWith(".pdf") && (f.endsWith(".doc") || f.endsWith(".docx") || f.endsWith(".txt")));
+      if (nonPdf.length > 0) {
+        fileDitemukan = nonPdf[nonPdf.length - 1];
+      }
+    }
+
+    if (fileDitemukan) {
+      const buffer = fs.readFileSync(path.join(DOKUMEN_DIR, fileDitemukan));
+      const extracted = ekstrakTeksDariDokumen(buffer, fileDitemukan);
+      judulPdf = extracted.judul;
+      paragrafPdf = extracted.paragraf;
+    } else {
+      paragrafPdf = [
+        "Naskah dokumen tugas perkuliahan telah dirapikan formatnya oleh Rexha (Document Specialist).",
+        "Struktur penulisan disesuaikan dengan pedoman karya ilmiah kampus dengan margin 4-3-3-3 dan jenis font standar Times New Roman.",
+        "Dokumen ini merupakan file biner PDF asli (.pdf) yang siap dicetak atau dikumpulkan langsung ke portal akademik kampus."
+      ];
+    }
+
+    const slug = fileDitemukan ? path.parse(fileDitemukan).name.replace(/[^a-zA-Z0-9]/g, "_") : "TUGAS_KULIAH";
+    namaFile = `${slug}_${timestamp}.pdf`;
     const pathFileBaru = path.join(DOKUMEN_DIR, namaFile);
+
     buatFilePdfAsli({
       pathFile: pathFileBaru,
-      judul: "TUGAS BESAR PERKULIAHAN MA'AM",
-      teksParagraf: [
-        `Dokumen tugas perkuliahan resmi yang telah dirapikan formatnya oleh Rexha (Document Specialist).`,
-        `Seluruh struktur penulisan telah disesuaikan dengan pedoman karya ilmiah kampus dengan margin 4-3-3-3 dan jenis font standar Times New Roman.`,
-        `Dokumen ini merupakan file biner PDF asli (.pdf) yang siap langsung dicetak atau dikumpulkan ke portal akademik kampus maupun dosen pengampu.`
-      ]
+      judul: judulPdf.toUpperCase(),
+      teksParagraf: paragrafPdf,
+      subHeader: `Dikonversi oleh Rexha • Berkas Asal: ${fileDitemukan || "Dokumen Tugas"} • ${sekarang.toLocaleDateString("id-ID")}`
     });
-    pesan = `Rexha berhasil mengonversi dokumen menjadi file PDF ASLI (.pdf): "${namaFile}". Berkas tersimpan di folder 'dokumen_tugas'!`;
+
+    pesan = `Rexha berhasil mengonversi seluruh isi dokumen "${fileDitemukan || namaFile}" (${paragrafPdf.length} paragraf) menjadi berkas PDF ASLI (.pdf) siap cetak/kumpul!`;
     return { namaFile, pathFile: pathFileBaru, pesan };
   } 
   // C. TEMPLATE COVER MAKALAH
@@ -681,6 +727,13 @@ const server = http.createServer((req, res) => {
         const sekarang = new Date();
         const baseName = path.parse(namaFileAsli).name;
         
+        // Simpan juga berkas asal ke folder dokumen_tugas agar tersimpan utuh di File Explorer
+        const pathAsal = path.join(DOKUMEN_DIR, namaFileAsli);
+        try { fs.writeFileSync(pathAsal, buffer); } catch(e) {}
+
+        // EKSTRAK ISI TEKS ASLI DARI FILE UPLOAD PENGGUNA!
+        const { judul: judulAsli, paragraf: isiParagrafAsli } = ekstrakTeksDariDokumen(buffer, namaFileAsli);
+
         let fileHasil = "";
         let isiHasil = "";
         let pesan = "";
@@ -690,7 +743,7 @@ const server = http.createServer((req, res) => {
           isiHasil = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
   <meta charset="utf-8">
-  <title>${baseName}</title>
+  <title>${escapeHtml(judulAsli)}</title>
   <!--[if gte mso 9]>
   <xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml>
   <![endif]-->
@@ -704,32 +757,28 @@ const server = http.createServer((req, res) => {
 <body>
   <div class="header-info">
     <b>DOKUMEN HASIL EKSTRAKSI WORD (.DOC)</b><br>
-    Nama Berkas Asal: ${namaFileAsli}<br>
+    Nama Berkas Asal: ${escapeHtml(namaFileAsli)}<br>
     Dikonversi oleh: Rexha (Document Specialist)<br>
     Tanggal: ${sekarang.toLocaleString("id-ID")}
   </div>
-  <h1>${baseName.toUpperCase()}</h1>
-  <p>Berkas <b>"${namaFileAsli}"</b> telah berhasil dikonversi dan diekstrak oleh <b>Rexha</b> menjadi format dokumen <b>Microsoft Word (.doc)</b> yang dapat Ma'am edit kembali secara leluasa.</p>
-  <p>Format margin (4-3-3-3), jenis font akademik, dan susunan paragraf telah dirapikan agar siap digunakan untuk pengerjaan tugas perkuliahan.</p>
+  <h1>${escapeHtml(judulAsli.toUpperCase())}</h1>
+  ${isiParagrafAsli.map(p => `<p>${escapeHtml(p)}</p>`).join("\n  ")}
 </body>
 </html>`;
-          pesan = `Rexha berhasil mengonversi "${namaFileAsli}" menjadi format Microsoft Word (.doc) siap edit!`;
+          pesan = `Rexha berhasil mengekstrak seluruh naskah asli dari "${namaFileAsli}" (${isiParagrafAsli.length} paragraf) menjadi format Microsoft Word (.doc) siap edit!`;
         } else {
-          // Target PDF: MENGHASILKAN FILE .PDF ASLI BINER!
+          // Target PDF: MENGHASILKAN FILE .PDF ASLI BINER DENGAN ISI ASLI DOKUMEN!
           fileHasil = `${baseName}_HASIL_KONVERSI.pdf`;
           const pathHasilPdf = path.join(DOKUMEN_DIR, fileHasil);
+
           buatFilePdfAsli({
             pathFile: pathHasilPdf,
-            judul: baseName.toUpperCase(),
-            teksParagraf: [
-              `Dokumen tugas perkuliahan resmi yang telah dikonversi dan dirapikan oleh Rexha (Document Specialist).`,
-              `Berkas asal: ${namaFileAsli}`,
-              `Waktu konversi: ${sekarang.toLocaleString("id-ID")}`,
-              `Seluruh format margin (4-3-3-3), jenis font akademik Times New Roman, dan spasi telah disesuaikan dengan pedoman penulisan karya ilmiah kampus.`,
-              `Dokumen ini adalah file biner PDF asli (.pdf) yang siap dicetak atau dikumpulkan langsung ke portal akademik kampus.`
-            ]
+            judul: judulAsli || baseName.toUpperCase(),
+            teksParagraf: isiParagrafAsli,
+            subHeader: `Dikonversi oleh Rexha • Berkas Asal: ${namaFileAsli} • ${sekarang.toLocaleDateString("id-ID")}`
           });
-          pesan = `Rexha berhasil mengonversi "${namaFileAsli}" menjadi berkas PDF ASLI (.pdf) siap kumpul!`;
+
+          pesan = `Rexha berhasil mengonversi seluruh naskah asli "${namaFileAsli}" (${isiParagrafAsli.length} paragraf) menjadi berkas PDF ASLI (.pdf) siap cetak/kumpul!`;
           
           res.writeHead(200, { "Content-Type": "application/json" });
           res.end(JSON.stringify({

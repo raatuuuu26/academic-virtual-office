@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "lint": "node -c server.js pdf_generator.js",
+    "lint": "node -c server.js pdf_generator.js doc_parser.js",
     "test": "node test/app.test.js"
   }
 }

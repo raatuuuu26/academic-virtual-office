@@ -107,3 +107,29 @@ test("5. Verifikasi Integritas Penyimpanan Feedback Pengguna", () => {
   fs.unlinkSync(feedbackFile);
 });
 
+test("6. Verifikasi Ekstraksi Isi Teks Dokumen Nyata (doc_parser.js)", async () => {
+  const { ekstrakTeksDariDokumen } = await import("../doc_parser.js");
+
+  // A. Uji ekstraksi format Word HTML / DOC
+  const sampleDocHtml = Buffer.from(`
+    <html xmlns:w='urn:schemas-microsoft-com:office:word'>
+    <body>
+      <h1>PROPOSAL BISNIS MAHASISWA</h1>
+      <p>Latar Belakang: Mengembangkan platform edukasi dan perkuliahan.</p>
+      <p>Tujuan: Memberikan asisten pintar berbasis teknologi.</p>
+    </body>
+    </html>
+  `, "utf-8");
+
+  const hasil = ekstrakTeksDariDokumen(sampleDocHtml, "Proposal_Bisnis.doc");
+  assert.equal(hasil.judul, "PROPOSAL BISNIS MAHASISWA");
+  assert.ok(hasil.paragraf.length >= 2, "Harus mengekstrak minimal 2 paragraf");
+  assert.ok(hasil.paragraf.some(p => p.includes("Latar Belakang")), "Konten paragraf asli harus terbawa");
+
+  // B. Uji ekstraksi format Plain Text
+  const sampleTxt = Buffer.from("Judul Catatan Kuliah\nBab 1: Pendahuluan\nBab 2: Pembahasan Masalah", "utf-8");
+  const hasilTxt = ekstrakTeksDariDokumen(sampleTxt, "Catatan.txt");
+  assert.equal(hasilTxt.judul, "Judul Catatan Kuliah");
+  assert.equal(hasilTxt.paragraf.length, 3);
+});
+
