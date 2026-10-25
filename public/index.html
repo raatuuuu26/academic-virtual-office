@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minimalist Academic Office • Asisten Kuliah Ma'am</title>
+  <!-- Google Fonts: Elegant Minimalist Aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cream: #fbf9f5;
+      --surface-card: #ffffff;
+      --surface-soft: #f4efe6;
+      --border-subtle: #e8e1d5;
+      --border-focus: #c2b4a3;
+      --text-main: #2c2724;
+      --text-muted: #786f66;
+      --accent-sage: #6b8173;
+      --accent-blue-slate: #627d98;
+      --wood-cream: #ebdccb;
+      --wood-brown: #8d5b36;
+      --shadow-soft: 0 4px 20px rgba(44, 39, 36, 0.05);
+      --shadow-modal: 0 20px 50px rgba(44, 39, 36, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-cream);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 24px;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* ============================================================
+       MODAL DI TENGAH-TENGAH LAYAR (CENTER POPUP NOTIFICATION)
+       ============================================================ */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(44, 39, 36, 0.45);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .center-notification-box {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 520px;
+      box-shadow: var(--shadow-modal);
+      overflow: hidden;
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .modal-backdrop.show .center-notification-box {
+      transform: scale(1);
+    }
+
+    .modal-header-bar {
+      background: var(--surface-soft);
+      padding: 14px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .reminder-sender {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sender-avatar {
+      font-size: 22px;
+    }
+    .sender-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .sender-badge {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* TOMBOL X CLOSE */
+    .btn-close-modal {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: white;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-close-modal:hover {
+      background: #f1eae0;
+      color: var(--text-main);
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .modal-greeting {
+      font-family: 'Playfair Display', serif;
+      font-size: 25px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .modal-subtext {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .modal-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #edf5f0;
+      color: #2b6139;
+      border: 1px solid #c2e0cb;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn-modal-action {
+      background: var(--text-main);
+      color: white;
+      border: none;
+      padding: 11px 24px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-modal-action:hover { opacity: 0.9; }
+
+    .btn-modal-dismiss {
+      background: var(--surface-soft);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      padding: 11px 20px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-modal-dismiss:hover { background: #e8ded2; }
+
+    /* ============================================================
+       PAGE STYLES
+       ============================================================ */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .header-branding {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-emblem {
+      width: 44px;
+      height: 44px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    h1.brand-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      color: var(--text-main);
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-notification {
+      background: var(--surface-soft);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-notification:hover {
+      background: #ebdccb;
+      border-color: var(--border-focus);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(107, 129, 115, 0.12);
+      border: 1px solid var(--accent-sage);
+      color: var(--accent-sage);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent-sage);
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    /* GREETING HERO BANNER */
+    .greeting-card {
+      background: linear-gradient(135deg, #ffffff 0%, #fdfbf7 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .greeting-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .greeting-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .badge-deadline-ok {
+      background: #edf5f0;
+      color: #2b6139;
+      border: 1px solid #c2e0cb;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* MAIN GRID LAYOUT */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+    }
+
+    .office-stage {
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+    }
+
+    /* EMPLOYEES ROW (3 KOLOM SEIMBANG SAMA RATA) */
+    .employees-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+      width: 100%;
+    }
+
+    .desk-pod {
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 20px 14px;
+      text-align: center;
+      position: relative;
+      background: #faf8f5;
+      min-width: 0;
+      box-sizing: border-box;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .desk-pod.active-worker {
+      border-color: var(--accent-blue-slate);
+      box-shadow: 0 0 0 3px rgba(98, 125, 152, 0.2);
+      transform: translateY(-4px);
+    }
+
+    .avatar-frame {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(44, 39, 36, 0.06);
+      overflow: hidden;
+    }
+    .avatar-frame.typing {
+      animation: gentleBounce 0.45s infinite alternate ease-in-out;
+    }
+    @keyframes gentleBounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-6px); }
+    }
+
+    .desk-surface {
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      gap: 8px;
+      margin: 10px 0;
+      border-bottom: 3px solid rgba(0,0,0,0.15);
+      font-weight: 600;
+    }
+
+    .pod-rexha .desk-surface {
+      background: var(--wood-cream);
+      color: #5c432d;
+    }
+    .pod-hendry .desk-surface {
+      background: var(--wood-brown);
+      color: #ffffff;
+    }
+    .pod-cantika .desk-surface {
+      background: var(--accent-blue-slate);
+      color: #ffffff;
+    }
+
+    .worker-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .worker-role {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin: 2px 0 6px;
+    }
+    .worker-details {
+      font-size: 11px;
+      color: #8a7f74;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      min-height: 38px;
+    }
+
+    .worker-status {
+      display: inline-block;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .speech-bubble {
+      position: absolute;
+      top: -34px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2c2724;
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px 5px 0;
+      border-style: solid;
+      border-color: #2c2724 transparent;
+    }
+    .desk-pod.active-worker .speech-bubble {
+      opacity: 1;
+    }
+
+    /* INSTRUCTION FORM */
+    .command-box {
+      background: var(--surface-soft);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    select, input[type="text"], button {
+      font-family: inherit;
+    }
+
+    select {
+      background: white;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: white;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 11px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--border-focus);
+    }
+
+    .btn-exec {
+      background: var(--text-main);
+      color: white;
+      border: none;
+      padding: 11px 22px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.2s;
+    }
+    .btn-exec:hover { opacity: 0.9; }
+
+    .quick-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tag-chip {
+      background: white;
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tag-chip:hover {
+      background: #ebdccb;
+      color: var(--text-main);
+      border-color: var(--border-focus);
+    }
+
+    .log-stream {
+      margin-top: 14px;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 12px;
+      font-family: monospace;
+      color: #4a423a;
+      max-height: 110px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    /* RIGHT SIDEBAR */
+    .sidebar-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-main);
+    }
+
+    .schedule-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 330px;
+      overflow-y: auto;
+    }
+
+    .schedule-item {
+      background: var(--surface-soft);
+      border-left: 3px solid var(--accent-blue-slate);
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+    }
+    .schedule-day {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--accent-blue-slate);
+      letter-spacing: 0.5px;
+    }
+    .schedule-matkul {
+      font-size: 13px;
+      font-weight: 700;
+      margin: 2px 0;
+      color: var(--text-main);
+    }
+    .schedule-meta {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .file-tree {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .file-pill {
+      background: var(--surface-soft);
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .file-pill:hover {
+      border-color: var(--border-focus);
+      background: white;
+    }
+
+    .preview-canvas {
+      background: #faf8f5;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 12px;
+      max-height: 180px;
+      overflow-y: auto;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       MODAL BUKU PANDUAN PERINTAH (CHEATSHEET)
+       ============================================================ -->
+  <div class="modal-backdrop" id="panduanModal">
+    <div class="center-notification-box" style="max-width: 650px;">
+      <div class="modal-header-bar">
+        <div class="reminder-sender">
+          <span class="sender-avatar">📖</span>
+          <div>
+            <div class="sender-title">Buku Panduan Perintah Asisten</div>
+            <div class="sender-badge">Bisa Pakai Bahasa Bebas & Santai Sehari-hari</div>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="tutupModalPanduan()" title="Tutup Panduan (X)">✕</button>
+      </div>
+      <div class="modal-body" style="text-align: left; max-height: 480px; overflow-y: auto; padding: 20px;">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          💡 <b>Kabar Baik:</b> Ma'am <b>TIDAK PERLU</b> menghafal kalimat kaku. Asisten Ma'am sudah dirancang pintar untuk menangkap kata kunci dan maksud kalimat santai Ma'am!
+        </p>
+
+        <!-- PANDUAN CANTIKA -->
+        <div style="background: var(--surface-soft); border-left: 3px solid var(--accent-blue-slate); padding: 12px; border-radius: 6px; margin-bottom: 14px;">
+          <h4 style="font-size: 14px; color: var(--accent-blue-slate); margin-bottom: 6px;">👩‍💼 1. Cantika (Jadwal & Pengingat)</h4>
+          <ul style="font-size: 12px; line-height: 1.6; padding-left: 18px; color: var(--text-main);">
+            <li><b>Tanya Jadwal:</b> <i>"Ada kuliah apa hari ini, Cantika?"</i> atau <i>"Hari ini ada kelas Zoom gak?"</i></li>
+            <li><b>Ubah Jam Minggu Ini:</b> <i>"Cantika, ubah jam kuliah PBO hari Senin minggu ini jadi jam 8 malam"</i></li>
+            <li><b>Pindah Hari Minggu Ini:</b> <i>"PBO minggu ini pindah ke hari Sabtu jam 10 pagi"</i></li>
+            <li><b>Reset Jadwal Normal:</b> <i>"Cantika, kembalikan jadwal ke semula"</i> atau <i>"Reset jadwal"</i></li>
+            <li><b>Cek Tugas:</b> <i>"Cantika, ada tugas apa yang belum selesai?"</i></li>
+          </ul>
+        </div>
+
+        <!-- PANDUAN REXHA -->
+        <div style="background: var(--surface-soft); border-left: 3px solid #8d5b36; padding: 12px; border-radius: 6px; margin-bottom: 14px;">
+          <h4 style="font-size: 14px; color: #8d5b36; margin-bottom: 6px;">📑 2. Rexha (Dokumen & Converter DOC ⇄ PDF)</h4>
+          <ul style="font-size: 12px; line-height: 1.6; padding-left: 18px; color: var(--text-main);">
+            <li><b>Konversi DOC ke PDF:</b> <i>"Rexha, tolong ubah dokumen tugas Word ini jadi PDF"</i></li>
+            <li><b>Konversi PDF ke DOC (Word):</b> <i>"Rexha, tolong konversi file PDF tugas ini ke format DOC Word agar bisa diedit"</i></li>
+            <li><b>Format Standar Kampus:</b> <i>"Format laporan praktikum ini siap cetak ke PDF ya Rexha"</i></li>
+            <li><b>Cover Makalah:</b> <i>"Rexha, buatkan template cover tugas resmi kampus"</i></li>
+          </ul>
+        </div>
+
+        <!-- PANDUAN HENDRY -->
+        <div style="background: var(--surface-soft); border-left: 3px solid var(--wood-brown); padding: 12px; border-radius: 6px;">
+          <h4 style="font-size: 14px; color: var(--wood-brown); margin-bottom: 6px;">📂 3. Hendry (File Explorer & Storage Organizer)</h4>
+          <ul style="font-size: 12px; line-height: 1.6; padding-left: 18px; color: var(--text-main);">
+            <li><b>Buat Folder di File Explorer:</b> <i>"Hendry, buatkan folder baru Catatan dan Materi Kuliah"</i></li>
+            <li><b>Pindahkan File / Folder:</b> <i>"Hendry, pindahkan file tugas ke folder Arsip"</i></li>
+            <li><b>Rapikan Foto & Video Kuliah:</b> <i>"Hendry, tolong rapikan foto materi catatan dan video rekaman Zoom"</i></li>
+          </ul>
+        </div>
+      </div>
+      <div style="padding: 12px 20px; background: #faf8f5; border-top: 1px solid var(--border-subtle); text-align: right;">
+        <button class="btn-modal-action" onclick="tutupModalPanduan()" style="padding: 8px 18px; font-size: 12px;">Tutup Panduan [✕]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       POPUP NOTIFIKASI DI TENGAH LAYAR (MODAL CENTER SCREEN)
+       ============================================================ -->
+  <div class="modal-backdrop show" id="centerNotificationModal">
+    <div class="center-notification-box">
+      <!-- Header dengan Pengirim & Tombol X Close -->
+      <div class="modal-header-bar">
+        <div class="reminder-sender">
+          <div style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 1.5px solid var(--border-subtle); background: white; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 100 100" width="38" height="38">
+              <circle cx="50" cy="17" r="11" fill="#2b1f1a"/>
+              <rect x="44" y="48" width="12" height="16" fill="#fce0cd"/>
+              <path d="M43 54 C43 50 57 50 57 54 L58 64 L42 64 Z" fill="#ffffff"/>
+              <path d="M22 88 C25 68 33 62 42 62 L58 62 C67 62 75 68 78 88 Z" fill="#475569"/>
+              <path d="M35 39 C35 55 41 61 50 61 C59 61 65 55 65 39 C65 28 59 24 50 24 C41 24 35 28 35 39 Z" fill="#ffebd9"/>
+              <circle cx="34" cy="47" r="2.5" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8"/>
+              <circle cx="66" cy="47" r="2.5" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8"/>
+              <path d="M34 35 C35 25 43 23 50 23 C57 23 65 25 66 35 Z" fill="#2b1f1a"/>
+              <circle cx="43.5" cy="41.5" rx="2" ry="2.5" fill="#1e293b"/>
+              <circle cx="56.5" cy="41.5" rx="2" ry="2.5" fill="#1e293b"/>
+              <path d="M44.5 50.5 Q50 55.5 55.5 50.5" stroke="#e11d48" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sender-title">Cantika — Sekretaris Pribadi</div>
+            <div class="sender-badge">Pengingat Harian Perkuliahan</div>
+          </div>
+        </div>
+        <!-- TOMBOL X CLOSE RESMI -->
+        <button class="btn-close-modal" onclick="tutupNotifikasiModal()" title="Tutup Notifikasi (X)">✕</button>
+      </div>
+
+      <!-- Isi Sapaan Utama -->
+      <div class="modal-body">
+        <h2 class="modal-greeting">"Ada tugas apa hari ini, Ma'am?"</h2>
+        <p class="modal-subtext">
+          Cantika, Rexha, dan Hendry siap membantu perkuliahan Anda.<br>
+          Jadwal kuliah sore/malam Anda dan berkas tugas telah disinkronkan.
+        </p>
+
+        <div class="modal-status-pill">
+          <span>✨</span>
+          <span>Status: Semua Deadline Minggu Ini Aman / Selesai</span>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-modal-action" onclick="tutupNotifikasiModal()">
+            Siap, Buka Kantor Virtual ➔
+          </button>
+          <button class="btn-modal-dismiss" onclick="tutupNotifikasiModal()">
+            Tutup [✕]
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- TOP HEADER -->
+    <header>
+      <div class="header-branding">
+        <div class="logo-emblem">☕</div>
+        <div>
+          <h1 class="brand-title">Academic Virtual Office</h1>
+          <p class="brand-subtitle">Kantor Asisten Kuliah Pribadi • Aesthetic Minimalist Edition</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <!-- TOMBOL BUKU PANDUAN PERINTAH -->
+        <button class="btn-notification" onclick="bukaModalPanduan()">
+          <span>📖</span> Panduan Perintah
+        </button>
+        <!-- TOMBOL BUKA NOTIFIKASI TENGAH LAYAR KAPAN SAJA -->
+        <button class="btn-notification" onclick="bukaNotifikasiModal()">
+          <span>🔔</span> Notifikasi Layar
+        </button>
+        <div class="status-badge">
+          <div class="pulse-dot"></div>
+          <span>3 Asisten Siaga</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- GREETING HERO -->
+    <div class="greeting-card">
+      <div>
+        <h2 class="greeting-title">"Ada tugas apa hari ini, Ma'am?"</h2>
+        <p class="greeting-desc">Cantika, Rexha, dan Hendry siap membantu perkuliahan, dokumen, dan penyimpanan cloud Anda.</p>
+      </div>
+      <div class="badge-deadline-ok">
+        <span>✨</span>
+        <span>Deadline Minggu Ini: Selesai / Aman</span>
+      </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div class="dashboard-layout">
+      <!-- LEFT: OFFICE FLOOR WITH 3 DESKS -->
+      <div>
+        <div class="office-stage">
+          <div class="section-header">
+            <span class="section-title">Workstation Asisten</span>
+            <span style="font-size: 12px; color: var(--text-muted);">Status: Ready for instruction</span>
+          </div>
+
+          <!-- THE 3 WORKERS -->
+          <div class="employees-row">
+            <!-- 1. REXHA -->
+            <div class="desk-pod pod-rexha" id="pod-rexha">
+              <div class="speech-bubble" id="bubble-rexha">Memformat Dokumen... 📑</div>
+              <div class="avatar-frame" id="avatar-rexha">
+                <img src="/avatars/rexha.jpg" alt="Rexha" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+              </div>
+              <div class="worker-name">Rexha</div>
+              <div class="worker-role">Dokumen & Converter (DOC ⇄ PDF)</div>
+              <div class="desk-surface">Cream Kayu ☕ 📑</div>
+              <p class="worker-details">Blazer formal, lanyard kantor, konversi 2 arah (DOC ke PDF & PDF ke Word/DOC), rapi & tegas.</p>
+              <span class="worker-status" id="status-rexha">Standby (Siaga)</span>
+            </div>
+
+            <!-- 2. HENDRY -->
+            <div class="desk-pod pod-hendry" id="pod-hendry">
+              <div class="speech-bubble" id="bubble-hendry">Merapikan File Explorer... 📂</div>
+              <div class="avatar-frame" id="avatar-hendry">
+                <img src="/avatars/hendry.jpg" alt="Hendry" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+              </div>
+              <div class="worker-name">Hendry</div>
+              <div class="worker-role">File & Storage Organizer</div>
+              <div class="desk-surface">Coklat Kayu 💻 📂</div>
+              <p class="worker-details">Kemeja lengan panjang rapi, kacamata tebal, fokus & cekatan mengelola File Explorer.</p>
+              <span class="worker-status" id="status-hendry">Standby (Siaga)</span>
+            </div>
+
+            <!-- 3. CANTIKA -->
+            <div class="desk-pod pod-cantika" id="pod-cantika">
+              <div class="speech-bubble" id="bubble-cantika">Mengecek Jadwal Kuliah... 📅</div>
+              <div class="avatar-frame" id="avatar-cantika">
+                <img src="/avatars/cantika.jpg" alt="Cantika" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+              </div>
+              <div class="worker-name">Cantika</div>
+              <div class="worker-role">Executive Secretary</div>
+              <div class="desk-surface">Biru Keabuan 📅 ✨</div>
+              <p class="worker-details">Blouse kerah tinggi, blazer pas badan, rambut sanggul, anting mutiara, senyum manis siaga.</p>
+              <span class="worker-status" id="status-cantika">Standby (Siaga)</span>
+            </div>
+          </div> <!-- PENUTUP EMPLOYEES-ROW (3 KOLOM SEIMBANG) -->
+
+          <!-- INSTRUCTION FORM -->
+          <div class="command-box">
+            <div class="form-row">
+              <select id="select-asisten">
+                <option value="cantika">Tugaskan ke Cantika (Jadwal / Pengingat / Sapaan)</option>
+                <option value="rexha">Tugaskan ke Rexha (Konversi Dokumen / Buat PDF)</option>
+                <option value="hendry">Tugaskan ke Hendry (Pindahkan File / Folder / Foto / Video)</option>
+              </select>
+              <input type="text" id="input-instruksi" placeholder="Tulis arahan untuk asisten Anda, Ma'am...">
+              <button class="btn-exec" id="btn-submit" onclick="eksekusiInstruksi()">
+                <span>Kirim</span> ➔
+              </button>
+            </div>
+
+            <!-- QUICK CHIPS -->
+            <div class="quick-tags">
+              <button class="tag-chip" onclick="pilihCepat('cantika', 'Ada kuliah apa hari ini?')">📅 Cek Jadwal Hari Ini</button>
+              <button class="tag-chip" onclick="pilihCepat('cantika', 'Cantika, ubah jam kuliah PBO hari Senin minggu ini jadi jam 8 malam')">⚡ Ubah Jam PBO Minggu Ini</button>
+              <button class="tag-chip" onclick="pilihCepat('rexha', 'Rexha, tolong ubah dokumen Word ini jadi PDF siap cetak')">📄 Word ➔ PDF (Rexha)</button>
+              <button class="tag-chip" onclick="pilihCepat('rexha', 'Rexha, tolong konversi file PDF tugas ini ke format DOC Word agar bisa diedit')">📝 PDF ➔ Word/DOC (Rexha)</button>
+              <button class="tag-chip" onclick="pilihCepat('hendry', 'Hendry, buatkan folder baru Catatan dan Materi Kuliah')">📂 Buat Folder (Hendry)</button>
+              <button class="tag-chip" onclick="pilihCepat('hendry', 'Hendry, tolong rapikan foto catatan dan video kuliah')">📦 Rapikan Berkas (Hendry)</button>
+            </div>
+
+            <!-- LIVE CONSOLE -->
+            <div class="log-stream" id="console-stream">
+[SISTEM KANTOR MINIMALIS AKTIF] Cantika, Rexha, dan Hendry siap menerima tugas dari Ma'am.
+            </div>
+          </div>
+        </div>
+
+        <!-- PRATINJAU DOKUMEN / OUTPUT TERAKHIR -->
+        <div class="card">
+          <div class="card-heading">
+            <span>📄 Pratinjau Dokumen Tugas (Hasil Kerja Rexha)</span>
+            <button class="tag-chip" onclick="muatDaftarFile()">🔄 Muat Ulang</button>
+          </div>
+          <div class="preview-canvas" id="preview-area">
+            Belum ada berkas yang dipilih. Klik salah satu berkas di sidebar kanan untuk melihat isinya.
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDEBAR: JADWAL & FILE STORAGE -->
+      <div class="sidebar-panel">
+        <!-- CARD JADWAL KULIAH RESMI -->
+        <div class="card">
+          <div class="card-heading">
+            <span>📅 Jadwal Kuliah Ma'am</span>
+            <span style="font-size: 11px; color: var(--accent-sage); font-weight: 600;">Semester Aktif</span>
+          </div>
+          <div class="schedule-list" id="schedule-container">
+            <div style="font-size: 12px; color: var(--text-muted);">Memuat jadwal...</div>
+          </div>
+        </div>
+
+        <!-- CARD BERKAS DOKUMEN -->
+        <div class="card">
+          <div class="card-heading">
+            <span>📁 Berkas Dokumen Tugas</span>
+          </div>
+          <div class="file-tree" id="file-container">
+            <div style="font-size: 12px; color: var(--text-muted);">Memuat berkas...</div>
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">
+            Lokasi Folder di Komputer:<br>
+            <code id="folder-loc-label" style="font-size: 10.5px; word-break: break-all;">...</code>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // KONTROL MODAL PANDUAN PERINTAH
+    function bukaModalPanduan() {
+      document.getElementById("panduanModal").classList.add("show");
+    }
+    function tutupModalPanduan() {
+      document.getElementById("panduanModal").classList.remove("show");
+    }
+
+    // FUNGSI KONTROL MODAL NOTIFIKASI DI TENGAH LAYAR
+    function bukaNotifikasiModal() {
+      document.getElementById("centerNotificationModal").classList.add("show");
+      // Panggil juga GUI Windows desktop
+      fetch("/api/kirim-notifikasi-windows", { method: "POST" }).catch(() => {});
+    }
+
+    function tutupNotifikasiModal() {
+      document.getElementById("centerNotificationModal").classList.remove("show");
+    }
+
+    // ESC key closes modal
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") tutupNotifikasiModal();
+    });
+
+    function log(msg) {
+      const box = document.getElementById("console-stream");
+      const time = new Date().toLocaleTimeString("id-ID");
+      box.innerHTML += `\n[${time}] ${msg}`;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function pilihCepat(asistenId, teks) {
+      document.getElementById("select-asisten").value = asistenId;
+      document.getElementById("input-instruksi").value = teks;
+    }
+
+    async function muatDataKantor() {
+      try {
+        const res = await fetch("/api/data");
+        const data = await res.json();
+
+        // Render Jadwal Kuliah
+        const container = document.getElementById("schedule-container");
+        container.innerHTML = data.jadwalKuliah.map(j => `
+          <div class="schedule-item ${j.isSementara ? 'temporary-schedule' : ''}" style="${j.isSementara ? 'border-left-color: #d97706; background: #fffbeb;' : ''}">
+            <div class="schedule-day">
+              ${j.hari} • ${j.jam}
+              ${j.isSementara ? '<span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px; font-weight: 700;">⚠️ KHUSUS MINGGU INI</span>' : ''}
+            </div>
+            <div class="schedule-matkul">${j.matkul}</div>
+            <div class="schedule-meta">${j.ruangan} — Dosen: ${j.dosen}</div>
+            ${j.catatanKhusus ? `<div style="font-size: 10.5px; color: #b45309; margin-top: 4px; font-style: italic;">${j.catatanKhusus}</div>` : ''}
+          </div>
+        `).join("");
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function muatDaftarFile() {
+      try {
+        const res = await fetch("/api/files");
+        const d = await res.json();
+        document.getElementById("folder-loc-label").innerText = d.folder;
+
+        const container = document.getElementById("file-container");
+        if (!d.files.length) {
+          container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted);">Belum ada dokumen tugas.</div>';
+          return;
+        }
+
+        container.innerHTML = d.files.map(f => `
+          <div class="file-pill" onclick="bacaDokumen('${f.nama}')">
+            <span>📄 ${f.nama}</span>
+            <span style="font-size: 11px; color: var(--text-muted);">${f.waktu}</span>
+          </div>
+        `).join("");
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function bacaDokumen(nama) {
+      try {
+        const res = await fetch(`/api/file-content?nama=${encodeURIComponent(nama)}`);
+        const html = await res.text();
+        const frame = document.getElementById("preview-area");
+        frame.innerHTML = `<iframe style="width:100%; height:180px; border:none; background:white; border-radius:6px;" srcdoc="${html.replace(/"/g, '&quot;')}"></iframe>`;
+        log(`Membuka berkas: "${nama}"`);
+      } catch (e) {
+        log("Gagal membaca berkas.");
+      }
+    }
+
+    async function eksekusiInstruksi() {
+      const asistenId = document.getElementById("select-asisten").value;
+      const input = document.getElementById("input-instruksi");
+      const instruksi = input.value.trim();
+
+      if (!instruksi) {
+        alert("Silakan masukkan instruksi untuk asisten Anda, Ma'am.");
+        return;
+      }
+
+      const btn = document.getElementById("btn-submit");
+      btn.disabled = true;
+
+      const pod = document.getElementById(`pod-${asistenId}`);
+      const avatar = document.getElementById(`avatar-${asistenId}`);
+      const statusBadge = document.getElementById(`status-${asistenId}`);
+
+      pod.classList.add("active-worker");
+      avatar.classList.add("typing");
+      statusBadge.innerText = "⏳ Sedang Memproses...";
+      statusBadge.style.color = "#8d5b36";
+
+      log(`[INSTRUKSI KE ${asistenId.toUpperCase()}] "${instruksi}"`);
+
+      setTimeout(async () => {
+        try {
+          const res = await fetch("/api/tugaskan", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ karyawanId: asistenId, instruksi })
+          });
+          const hasil = await res.json();
+
+          if (hasil.sukses) {
+            log(`[RESPON ${asistenId.toUpperCase()}]:\n${hasil.pesan}`);
+            await muatDataKantor();
+            await muatDaftarFile();
+            if (hasil.namaFile) {
+              bacaDokumen(hasil.namaFile);
+            }
+            input.value = "";
+          }
+        } catch (e) {
+          log(`Error: ${e.message}`);
+        } finally {
+          setTimeout(() => {
+            pod.classList.remove("active-worker");
+            avatar.classList.remove("typing");
+            statusBadge.innerText = "Standby (Siaga)";
+            statusBadge.style.color = "";
+            btn.disabled = false;
+          }, 600);
+        }
+      }, 1200);
+    }
+
+    document.getElementById("input-instruksi").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") eksekusiInstruksi();
+    });
+
+    // Inisialisasi awal
+    muatDataKantor();
+    muatDaftarFile();
+  </script>
+</body>
+</html>

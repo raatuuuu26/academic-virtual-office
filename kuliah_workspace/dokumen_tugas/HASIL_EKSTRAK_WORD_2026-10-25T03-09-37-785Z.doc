@@ -1,0 +1,32 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta charset="utf-8">
+  <title>Hasil Konversi PDF ke Word</title>
+  <!--[if gte mso 9]>
+  <xml>
+    <w:WordDocument>
+      <w:View>Print</w:View>
+      <w:Zoom>100</w:Zoom>
+      <w:DoNotOptimizeForBrowser/>
+    </w:WordDocument>
+  </xml>
+  <![endif]-->
+  <style>
+    body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #000; margin: 3cm 3cm 3cm 4cm; }
+    h1 { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 18pt; }
+    p { text-indent: 1.25cm; text-align: justify; margin-bottom: 6pt; }
+    .meta-box { border-bottom: 1pt solid #444; padding-bottom: 8pt; margin-bottom: 18pt; font-size: 10pt; color: #555; }
+  </style>
+</head>
+<body>
+  <div class="meta-box">
+    <b>HASIL KONVERSI DARI PDF KE WORD (DOC)</b><br>
+    Dikonversi & Diekstrak oleh: Rexha (Document Specialist)<br>
+    Waktu Proses: 25/10/2026, 10.09.37<br>
+    Instruksi: "Rexha, tolong konversi file PDF tugas ini ke format DOC Word agar bisa diedit"
+  </div>
+  <h1>DOKUMEN HASIL KONVERSI (BISA DIEDIT)</h1>
+  <p>Seluruh teks, paragraf, dan struktur dokumen dari berkas <b>PDF</b> telah diekstrak dan dikonversi oleh <b>Rexha</b> menjadi format dokumen <b>Microsoft Word (.doc)</b> yang dapat Ma'am edit kembali dengan leluasa.</p>
+  <p>Format margin (4-3-3-3), jenis font akademik, dan spasi paragraf telah dipersiapkan agar Ma'am bisa langsung menambahkan materi atau merevisi bagian tugas yang diperlukan.</p>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "simple-ai-agent",
+  "version": "1.0.0",
+  "description": "Contoh program AI Agent sederhana untuk memahami cara kerja ReAct Loop dan Tools",
+  "main": "agent.js",
+  "type": "module",
+  "scripts": {
+    "start": "node agent.js"
+  }
+}

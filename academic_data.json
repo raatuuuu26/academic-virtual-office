@@ -1,0 +1,103 @@
+{
+  "pengaturan": {
+    "greeting": "Ada tugas apa hari ini, Ma'am?",
+    "namaPanggilan": "Ma'am",
+    "tema": "minimalist aesthetic",
+    "jenisNotifikasi": "Notifikasi Windows Saja"
+  },
+  "karyawan": [
+    {
+      "id": "rexha",
+      "nama": "Rexha",
+      "peran": "Document & PDF Specialist",
+      "deskripsi": "Mengonversi DOC ke PDF dan sebaliknya (PDF ke DOC/Word), merapikan format tugas, dan membuat template makalah.",
+      "avatarDesc": "Perempuan, blazer formal, lanyard kantor, rambut rapi & profesional, ramah & tegas",
+      "warnaMeja": "Cream Kayu (#e6d5c3)"
+    },
+    {
+      "id": "hendry",
+      "nama": "Hendry",
+      "peran": "File & Storage Explorer Specialist",
+      "deskripsi": "Memindahkan folder, berkas tugas, foto materi, dan rekaman video kuliah di File Explorer laptop Ma'am sesuai arahan.",
+      "avatarDesc": "Laki-laki, kemeja lengan panjang, kacamata tebal, fokus & cekatan",
+      "warnaMeja": "Coklat Kayu (#8d5b36)"
+    },
+    {
+      "id": "cantika",
+      "nama": "Cantika",
+      "peran": "Executive Academic Secretary",
+      "deskripsi": "Menyapa setiap hari, mengingatkan jadwal kuliah sore/malam, dan memantau status tugas.",
+      "avatarDesc": "Perempuan, blouse kerah tinggi, blazer pas badan, rambut sanggul, anting mutiara, senyum manis & siaga",
+      "warnaMeja": "Meja Panjang Biru Keabuan (#627d98)"
+    }
+  ],
+  "jadwalTetap": [
+    {
+      "id": "senin-1",
+      "hari": "Senin",
+      "jam": "17:00 WIB (Jam 5 Sore)",
+      "matkul": "PBO (Pemrograman Berorientasi Objek)",
+      "ruangan": "Ruang Zoom",
+      "dosen": "Pak Darmansyah"
+    },
+    {
+      "id": "senin-2",
+      "hari": "Senin",
+      "jam": "19:00 WIB (Jam 7 Malam)",
+      "matkul": "Cloud Computing",
+      "ruangan": "Ruang Zoom",
+      "dosen": "Pak Andriyana"
+    },
+    {
+      "id": "selasa-1",
+      "hari": "Selasa",
+      "jam": "17:00 WIB (Jam 5 Sore)",
+      "matkul": "Mobile Computing",
+      "ruangan": "Ruang Zoom",
+      "dosen": "Pak Andriyana"
+    },
+    {
+      "id": "selasa-2",
+      "hari": "Selasa",
+      "jam": "19:00 WIB (Jam 7 Malam)",
+      "matkul": "Kewirausahaan",
+      "ruangan": "Ruang Zoom",
+      "dosen": "Bu Yessy"
+    },
+    {
+      "id": "rabu-1",
+      "hari": "Rabu",
+      "jam": "19:00 WIB (Jam 7 Malam)",
+      "matkul": "Keamanan Cyber",
+      "ruangan": "Ruang Zoom",
+      "dosen": "Pak Dede"
+    },
+    {
+      "id": "kamis-1",
+      "hari": "Kamis",
+      "jam": "19:00 WIB (Jam 7 Malam)",
+      "matkul": "BAK",
+      "ruangan": "Ruang Zoom",
+      "dosen": "Pak Ketut"
+    },
+    {
+      "id": "jumat-1",
+      "hari": "Jumat",
+      "jam": "19:00 WIB (Jam 7 Malam)",
+      "matkul": "IOT (Internet of Things)",
+      "ruangan": "Kampus (Tatap Muka)",
+      "dosen": "Pak Evi"
+    }
+  ],
+  "jadwalSementara": [],
+  "tugasKuliah": [
+    {
+      "id": "tugas-selesai-1",
+      "judul": "Tugas Mingguan Semester",
+      "matkul": "Semua Mata Kuliah",
+      "deadline": "Minggu Ini",
+      "status": "Selesai",
+      "catatan": "Semua deadline minggu ini tidak ada / sudah selesai dengan baik!"
+    }
+  ]
+}
